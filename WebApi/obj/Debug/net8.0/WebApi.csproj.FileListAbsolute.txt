@@ -1,7 +1,0 @@
-D:\Code\Outside\CleanArchitecture.NET\WebApi\obj\Debug\net8.0\WebApi.csproj.AssemblyReference.cache
-D:\Code\Outside\CleanArchitecture.NET\WebApi\obj\Debug\net8.0\rpswa.dswa.cache.json
-D:\Code\Outside\CleanArchitecture.NET\WebApi\obj\Debug\net8.0\WebApi.GeneratedMSBuildEditorConfig.editorconfig
-D:\Code\Outside\CleanArchitecture.NET\WebApi\obj\Debug\net8.0\WebApi.AssemblyInfoInputs.cache
-D:\Code\Outside\CleanArchitecture.NET\WebApi\obj\Debug\net8.0\WebApi.AssemblyInfo.cs
-D:\Code\Outside\CleanArchitecture.NET\WebApi\obj\Debug\net8.0\WebApi.csproj.CoreCompileInputs.cache
-D:\Code\Outside\CleanArchitecture.NET\WebApi\obj\Debug\net8.0\WebApi.MvcApplicationPartsAssemblyInfo.cache

@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Dapper.Implementations
 {
-    public class Dapper : IDapper, IDisposable
+    public class DapperService : IDapperService, IDisposable
     {
         private IDbConnection? connection;
         private IDbTransaction? transaction;
         private readonly IConfiguration _configuration;
 
-        public Dapper(IConfiguration configuration)
+        public DapperService(IConfiguration configuration)
         {
             _configuration = configuration;
         }

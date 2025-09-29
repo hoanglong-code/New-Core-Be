@@ -1,5 +1,0 @@
-D:\Code\Outside\CleanArchitecture.NET\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.AssemblyReference.cache
-D:\Code\Outside\CleanArchitecture.NET\Infrastructure\obj\Debug\net8.0\Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
-D:\Code\Outside\CleanArchitecture.NET\Infrastructure\obj\Debug\net8.0\Infrastructure.AssemblyInfoInputs.cache
-D:\Code\Outside\CleanArchitecture.NET\Infrastructure\obj\Debug\net8.0\Infrastructure.AssemblyInfo.cs
-D:\Code\Outside\CleanArchitecture.NET\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.CoreCompileInputs.cache

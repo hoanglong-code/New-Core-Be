@@ -42,7 +42,7 @@ namespace Infrastructure.Extensions
 
             #region Dapper
             // Dapper
-            services.AddTransient<IDapper, Dapper>();
+            services.AddTransient<IDapperService, DapperService>();
             #endregion
 
             #region Validation

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Dapper.Abstractions
 {
-    public interface IDapper
+    public interface IDapperService
     {
         IDbConnection CreateConnection();
         IDbTransaction? Transaction { get; }

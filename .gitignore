@@ -1,4 +1,6 @@
 .vs/
+bin/
+obj/
 Domain/vs/
 Domain/bin/
 Domain/obj/
@@ -11,3 +13,4 @@ Infrastructure/obj/
 WebApi/vs/
 WebApi/bin/
 WebApi/obj/
+WebApi/Debug/
