@@ -1,0 +1,13 @@
+.vs/
+Domain/vs/
+Domain/bin/
+Domain/obj/
+Application/vs/
+Application/bin/
+Application/obj/
+Infrastructure/vs/
+Infrastructure/bin/
+Infrastructure/obj/
+WebApi/vs/
+WebApi/bin/
+WebApi/obj/
