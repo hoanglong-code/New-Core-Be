@@ -33,8 +33,12 @@ namespace Infrastructure.CustomAuthorize
 
             if (userContext == null || userContext.userClaims == null)
             {
-                context.Result = new ForbidResult();
-                return;
+                //context.Result = new ForbidResult();
+                //return;
+                context.Result = new JsonResult(new { error = MessageErrorConstant.AUTHORIZED })
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized
+                };
             }
 
             // Kiểm tra quyền

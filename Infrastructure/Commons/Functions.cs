@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.QueryDsl;
+using Microsoft.AspNetCore.Http;
 using MimeKit;
 using System;
 using System.Collections.Generic;
@@ -291,6 +293,7 @@ namespace Infrastructure.Commons
             // Subtract 3 days from Thursday to get Monday, which is the first weekday in ISO8601
             return result.AddDays(-3);
         }
+
         public static bool checkVideoFile(string extension)
         {
             bool res = false;
@@ -564,6 +567,17 @@ namespace Infrastructure.Commons
             if (dateTime == null) return null;
 
             return DateTime.TryParseExact(dateTime.Value.ToString(), formatDateTime, CultureInfo.InvariantCulture, DateTimeStyles.None, out result) ? dateTime.ToString() : null;
+        }
+
+        public static DateTime UnixTimeToDateTime(long unixTime)
+        {
+            // Chuyển từ Unix time (mili giây) sang DateTimeOffset (lưu trữ cả múi giờ)
+            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(unixTime);
+
+            // Chuyển về dạng DateTime theo giờ địa phương của máy chủ
+            DateTime localDateTime = dateTimeOffset.LocalDateTime;
+
+            return localDateTime;
         }
     }
 }

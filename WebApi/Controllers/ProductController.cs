@@ -1,12 +1,8 @@
 ﻿using Domain.Enums;
 using Infrastructure.CustomAuthorize;
 using Infrastructure.Features.Products.Commands;
-using Infrastructure.Services.Abstractions;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.Design;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebApi.Controllers
 {

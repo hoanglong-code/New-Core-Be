@@ -1,4 +1,6 @@
-﻿using Infrastructure.Configurations;
+﻿using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
+using Infrastructure.Configurations;
 using Infrastructure.Extensions;
 using Infrastructure.Hubs.Implementations;
 using Infrastructure.Middlewares;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -109,15 +112,18 @@ builder.Services.AddCors((options => {
     .AllowCredentials());
 }));
 
-//// Elasticsearch
-//builder.Services.AddSingleton<ElasticsearchClient>(sp =>
-//{
-//    var settings = new ElasticsearchClientSettings(new Uri(""));
-//    //.DefaultIndex("your-default-index")
-//    //.Authentication(new BasicAuthentication("elastic", "your_password"));
+// Elasticsearch
+builder.Services.AddSingleton<ElasticsearchClient>(sp =>
+{
+    var settings = new ElasticsearchClientSettings(new Uri(builder.Configuration["ElasticSearch:Url"]))
+    //.DefaultIndex("your-default-index")
+    .Authentication(new BasicAuthentication(builder.Configuration["ElasticSearch:Username"], builder.Configuration["ElasticSearch:Password"]))
+    .EnableDebugMode()
+    .PrettyJson()
+    .ServerCertificateValidationCallback((sender, cert, chain, errors) => true);
 
-//    return new ElasticsearchClient(settings);
-//});
+    return new ElasticsearchClient(settings);
+});
 
 // Other
 builder.Services.AddResponseCompression(options =>

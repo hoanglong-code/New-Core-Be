@@ -76,7 +76,7 @@ namespace Infrastructure.Services.Implementations
                 }
                 if (entity.Id <= 0)
                 {
-                    _entityRepo.Add(entity);
+                    await _entityRepo.AddAsync(entity);
                 }
                 else
                 {
@@ -85,7 +85,7 @@ namespace Infrastructure.Services.Implementations
                     {
                         throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                     }
-                    _entityRepo.Update(entity);
+                    await _entityRepo.UpdateAsync(entity);
                 }
                 await _unitOfWork.CommitChangesAsync();
                 return entity;
@@ -105,7 +105,7 @@ namespace Infrastructure.Services.Implementations
                 {
                     throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                 }
-                _entityRepo.RemoveSoft(curEntity);
+                await _entityRepo.RemoveSoftAsync(curEntity);
                 await _unitOfWork.CommitChangesAsync();
                 return curEntity;
             }
@@ -121,7 +121,7 @@ namespace Infrastructure.Services.Implementations
             {
                 var idList = ids.Split(",").Select(int.Parse).ToList();
                 var entities = await _entityRepo.All().Where(s => idList.Contains(s.Id)).ToListAsync();
-                _entityRepo.RemoveSoftRange(entities);
+                await _entityRepo.RemoveSoftRangeAsync(entities);
                 await _unitOfWork.CommitChangesAsync();
                 return entities;
             }
