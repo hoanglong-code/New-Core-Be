@@ -1,6 +1,7 @@
 ﻿using Application.Contexts.Abstractions;
 using Application.IReponsitories.Abstractions;
 using Domain.Entities.Extend;
+using Elastic.Clients.Elasticsearch;
 using Infrastructure.Configurations;
 using Infrastructure.Reponsitories.Base;
 using System;
@@ -15,10 +16,12 @@ namespace Infrastructure.Reponsitories.Implementations
     {
         private readonly AppDbContext _context;
         private readonly IUserContext _userContext;
-        public ProductRepository(AppDbContext context, IUserContext userContext) : base(context, userContext)
+        private readonly ElasticsearchClient _elasticClient;
+        public ProductRepository(AppDbContext context, IUserContext userContext, ElasticsearchClient elasticsearchClient) : base(context, userContext, elasticsearchClient)
         {
             _context = context;
             _userContext = userContext;
+            _elasticClient = elasticsearchClient;
         }
     }
 }

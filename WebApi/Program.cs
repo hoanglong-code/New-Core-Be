@@ -2,6 +2,7 @@
 using Elastic.Transport;
 using Infrastructure.Configurations;
 using Infrastructure.Extensions;
+using Infrastructure.Filters;
 using Infrastructure.Hubs.Implementations;
 using Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +24,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions => sqlOptions.MigrationsAssembly("Infrastructure")));
 
 builder.Services.AddControllers();
+builder.Services.AddControllersWithViews(options =>
+                options.Filters.Add(typeof(GlobalExceptionFilter))).AddNewtonsoftJson(
+                (cfg =>
+                {
+                    cfg.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                }));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
