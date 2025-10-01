@@ -12,8 +12,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Minio;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,11 +49,19 @@ builder.Services.AddSignalR(e =>
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-//// MediatR
-//builder.Services.AddMediatR(configuration =>
-//{
-//    configuration.RegisterServicesFromAssembly(typeof(Program).Assembly);
-//});
+// MediatR
+builder.Services.AddMediatR(configuration =>
+{
+    configuration.RegisterServicesFromAssembly(typeof(Program).Assembly);
+});
+
+// Minio
+var minioClient = new MinioClient()
+    .WithEndpoint(builder.Configuration["Minio:Endpoint"])
+    .WithCredentials(builder.Configuration["Minio:AccessKey"], builder.Configuration["Minio:SecretKey"])
+    .WithSSL(Boolean.Parse(builder.Configuration["Minio:Ssl"] ?? "false"))
+    .Build();
+builder.Services.AddSingleton(minioClient);
 
 // CustomService
 builder.Services.AddCustomService();

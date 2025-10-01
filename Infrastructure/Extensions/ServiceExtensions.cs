@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Minio.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,11 @@ namespace Infrastructure.Extensions
             #region Dapper
             // Dapper
             services.AddTransient<IDapperService, DapperService>();
+            #endregion
+
+            #region Minio
+            // Minio
+            services.AddTransient<IMinioService, IMinioService>();
             #endregion
 
             #region Validation
