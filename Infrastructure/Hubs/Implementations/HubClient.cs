@@ -13,44 +13,48 @@ namespace Infrastructure.Hubs.Implementations
     public class HubClient : Hub<IHubClient>
     {
         private readonly IUserContext _clientConnectionService;
-        public HubClient(IUserContext clientConnectionService)
+        private readonly IConnectionContext _connectionContext;
+        public HubClient(IUserContext clientConnectionService, IConnectionContext connectionContext)
         {
             _clientConnectionService = clientConnectionService;
+            _connectionContext = connectionContext;
         }
         // Gửi thông báo
-        public async Task SendErrorMessage(string connectionId, string message)
+        public async Task SendMessageToUserAsync(string connectionId, string message)
         {
             await Clients.Clients(connectionId).SendMessage(message);
-        }
-        // Dùng cách truyền tham số từ FE
-        public Task SuscribeToUser(string userId)
-        {
-            return this.Groups.AddToGroupAsync(Context.ConnectionId, userId);
         }
         // Client kết nối
         public override async Task OnConnectedAsync()
         {
-            // await PrintTime();
-
             string connectionId = Context.ConnectionId;
-            string userName = Context.User?.Identity?.Name ?? "Anonymous"; // Lấy tên người dùng hoặc đặt mặc định
+            string userName = Context.User?.Identity?.Name ?? "Anonymous";
+            string userId = Context.User?.FindFirst("Id")?.Value;
 
-            Console.WriteLine($"Client connected: {connectionId} - {userName}");
-
-            var userId = Context.User?.FindFirst("Id")?.Value;
-
-            if (_clientConnectionService.ConnectedClients.Values.ToList().Contains(userId))
+            if (string.IsNullOrEmpty(userId))
             {
-                await SendErrorMessage(connectionId, "Tài khoản này đã đăng nhập ở trên 1 thiết bị khác!");
-                //await Clients.Clients(connectionId).LogoutClient("");
+                await SendMessageToUserAsync(connectionId, "Không xác định được UserId");
+                Context.Abort(); // Ngắt kết nối
+                return;
             }
-            else
-            {
-                _clientConnectionService.ConnectedClients.TryAdd(connectionId, userId);
 
-                await Groups.AddToGroupAsync(connectionId, userId);
+            // Kiểm tra nếu user đã có kết nối cũ
+            var existingConnection = await _connectionContext.GetConnectionsAsync(userId);
+
+            if (existingConnection.Any())
+            {
+                // Gửi thông báo logout tới connection mới
+                await Clients.Client(connectionId).SendAsync("LogoutClient", "Tài khoản này đã đăng nhập ở thiết bị khác!");
+                Context.Abort(); // Ngắt kết nối
+                return;
             }
-            _clientConnectionService.ConnectedClients.TryAdd(connectionId, userId);
+
+            // Thêm connection mới
+            await _connectionContext.AddConnectionAsync(connectionId, userId);
+
+            // Thêm user vào group theo userId
+            await Groups.AddToGroupAsync(connectionId, userId);
+
             await base.OnConnectedAsync();
         }
         // Client ngắt kết nối
@@ -58,13 +62,7 @@ namespace Infrastructure.Hubs.Implementations
         {
             string connectionId = Context.ConnectionId;
 
-            _clientConnectionService.ConnectedClients.TryRemove(connectionId, out _);
-
-            var userId = Context.User?.FindFirst("Id")?.Value;
-
-            await Groups.RemoveFromGroupAsync(connectionId, userId);
-
-            Console.WriteLine($"Client disconnected: {connectionId}");
+            await _connectionContext.RemoveConnectionAsync(connectionId);
 
             await base.OnDisconnectedAsync(exception);
         }

@@ -26,11 +26,5 @@ namespace Domain.Enums
             LOG_IN = 9,
             LOG_OUT = 10
         }
-        public enum TypeSignalRNotify
-        {
-            LOG_OUT = 1,
-            NOTIFY = 2,
-            RE_LOGIN = 3
-        }
     }
 }

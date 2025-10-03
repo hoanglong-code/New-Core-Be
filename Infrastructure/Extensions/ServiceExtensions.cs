@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Minio.Abstractions;
+using Minio.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,17 +29,22 @@ namespace Infrastructure.Extensions
     {
         public static void AddCustomService(this IServiceCollection services)
         {
+            #region Context
+            // Context
+            services.AddSingleton<IConnectionContext, ConnectionContext>();
+            services.AddScoped<IUserContext, UserContext>();
+            #endregion
+
             #region Repository
             // Repository
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IProductRepository, ProductRepository>();
             #endregion
 
             #region Service
-            // Service
-            services.AddTransient<IUserContext, UserContext>();
-            services.AddTransient<ILoginService, LoginService>();
-            services.AddTransient<IProductService, ProductService>();
+            // Service      
+            services.AddScoped<ILoginService, LoginService>();
+            services.AddScoped<IProductService, ProductService>();
             #endregion
 
             #region Dapper
@@ -48,7 +54,7 @@ namespace Infrastructure.Extensions
 
             #region Minio
             // Minio
-            services.AddTransient<IMinioService, IMinioService>();
+            services.AddSingleton<IMinioService, MinioService>();
             #endregion
 
             #region Validation

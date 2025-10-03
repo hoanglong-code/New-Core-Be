@@ -12,6 +12,5 @@ namespace Application.Contexts.Abstractions
     {
         IUserContext SetUserClaims(UserClaims userClaims);
         UserClaims userClaims { get; }
-        ConcurrentDictionary<string, string> ConnectedClients { get; }
     }
 }

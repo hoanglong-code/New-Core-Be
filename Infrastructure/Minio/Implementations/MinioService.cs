@@ -8,6 +8,7 @@ using log4net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Minio;
+using Minio.Abstractions;
 using Minio.ApiEndpoints;
 using Minio.DataModel;
 using Minio.DataModel.Args;
@@ -20,20 +21,25 @@ using System.Threading.Tasks;
 
 namespace Minio.Implementations
 {
-    public class MinioService
+    public class MinioService : IMinioService
     {
-        private readonly MinioClient _minio;
+        private readonly IMinioClient _minio;
         private static readonly ILog log = LogMaster.GetLogger("MinioService", "MinioService");
-        public MinioService(MinioClient minio)
+        public MinioService(IMinioClient minio)
         {
-            _minio = minio;
+            _minio = minio ?? throw new ArgumentNullException(nameof(minio)); ;
         }
-        public async Task<BaseSearchResponse<Minio.DataModel.Bucket>> ListBucketAsync(BaseCriteria request)
+        public async Task<BaseSearchResponse<Minio.DataModel.Bucket>> ListBucketByPageAsync(BaseCriteria request)
         {
             var buckets = await _minio.ListBucketsAsync();
             return await BaseSearchResponse<Minio.DataModel.Bucket>.GetResponse(buckets.Buckets.AsQueryable(), request);
         }
-        public async Task<BaseSearchResponse<Minio.DataModel.Item>> ListObjectsAsync(MinioCriteria request)
+        public async Task<List<Minio.DataModel.Bucket>> ListAllBucketsAsync()
+        {
+            var buckets = await _minio.ListBucketsAsync();
+            return buckets.Buckets.ToList();
+        }
+        public async Task<BaseSearchResponse<Minio.DataModel.Item>> ListObjectsByPageAsync(MinioCriteria request)
         {
             var result = new List<Minio.DataModel.Item>();
 
@@ -55,6 +61,23 @@ namespace Minio.Implementations
             await tcs.Task; // chờ hoàn tất
 
             return await BaseSearchResponse<Minio.DataModel.Item>.GetResponse(result.AsQueryable(), request);
+        }
+        public async Task<List<Minio.DataModel.Item>> ListAllObjectsAsync(string bucketName, string? prefix)
+        {
+            var result = new List<Minio.DataModel.Item>();
+            var args = new ListObjectsArgs()
+                .WithBucket(bucketName)
+                .WithPrefix(prefix)
+                .WithRecursive(false);
+            var obs = _minio.ListObjectsAsync(args);
+            var tcs = new TaskCompletionSource();
+            obs.Subscribe(
+                item => result.Add(item),
+                ex => tcs.SetException(ex),
+                () => tcs.SetResult()
+            );
+            await tcs.Task; // chờ hoàn tất
+            return result;
         }
         public async Task<bool> BucketExistsAsync(string bucketName)
         {

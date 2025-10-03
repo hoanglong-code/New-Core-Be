@@ -12,8 +12,10 @@ namespace Minio.Abstractions
 {
     public interface IMinioService
     {
-        Task<BaseSearchResponse<Minio.DataModel.Bucket>> ListBucketAsync(BaseCriteria request);
-        Task<BaseSearchResponse<Minio.DataModel.Item>> ListObjectsAsync(MinioCriteria request);
+        Task<BaseSearchResponse<Minio.DataModel.Bucket>> ListBucketByPageAsync(BaseCriteria request);
+        Task<List<Minio.DataModel.Bucket>> ListAllBucketsAsync();
+        Task<BaseSearchResponse<Minio.DataModel.Item>> ListObjectsByPageAsync(MinioCriteria request);
+        Task<List<Minio.DataModel.Item>> ListAllObjectsAsync(string bucketName, string? prefix);
         Task<bool> BucketExistsAsync(string bucketName);
         Task CreateBucketAsync(string bucketName);
         Task RemoveBucketAsync(string bucketName);

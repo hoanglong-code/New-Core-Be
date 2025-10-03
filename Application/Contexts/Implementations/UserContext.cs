@@ -19,7 +19,5 @@ namespace Application.Contexts.Implementations
             _userClaims = userClaims;
             return this;
         }
-
-        public ConcurrentDictionary<string, string> ConnectedClients { get; } = new ConcurrentDictionary<string, string>();
     }
 }

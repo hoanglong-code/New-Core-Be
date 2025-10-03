@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Minio;
+using StackExchange.Redis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Runtime.Intrinsics.X86;
@@ -35,41 +36,62 @@ builder.Services.AddControllersWithViews(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-// HttpContext
-builder.Services.AddHttpContextAccessor();
-
+#region Signalr
 // Signalr
 builder.Services.AddSignalR(e =>
 {
     e.EnableDetailedErrors = true;
     e.MaximumReceiveMessageSize = 102400000;
 });
+#endregion
 
+#region AutoMapper
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+#endregion
 
+#region MediatR
 // MediatR
 builder.Services.AddMediatR(configuration =>
 {
     configuration.RegisterServicesFromAssembly(typeof(Program).Assembly);
 });
+#endregion
 
+#region Minio
 // Minio
-var minioClient = new MinioClient()
-    .WithEndpoint(builder.Configuration["Minio:Endpoint"])
-    .WithCredentials(builder.Configuration["Minio:AccessKey"], builder.Configuration["Minio:SecretKey"])
-    .WithSSL(Boolean.Parse(builder.Configuration["Minio:Ssl"] ?? "false"))
-    .Build();
-builder.Services.AddSingleton(minioClient);
+builder.Services.AddSingleton<IMinioClient>(sp =>
+{
+    return new MinioClient()
+        .WithEndpoint(builder.Configuration["Minio:Endpoint"])
+        .WithCredentials(
+            builder.Configuration["Minio:AccessKey"],
+            builder.Configuration["Minio:SecretKey"])
+        .WithSSL(bool.Parse(builder.Configuration["Minio:Ssl"] ?? "false"))
+        .Build(); // return IMinioClient
+});
+#endregion
 
+#region Redis
+// Redis
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"))
+);
+#endregion
+
+#region CustomService
 // CustomService
 builder.Services.AddCustomService();
+#endregion
 
+#region Http
 // Http
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
+#endregion
 
+#region Authorize and Swagger
 // Authorize and Swagger
 builder.Services.AddSwaggerGen(c =>
 {
@@ -119,7 +141,9 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero // remove delay of token when expire
     };
 });
+#endregion
 
+#region Cors
 // Cors
 builder.Services.AddCors((options => {
     options.AddPolicy("NON.EXE", builder =>
@@ -128,7 +152,9 @@ builder.Services.AddCors((options => {
     .AllowAnyHeader()
     .AllowCredentials());
 }));
+#endregion
 
+#region Elasticsearch
 // Elasticsearch
 builder.Services.AddSingleton<ElasticsearchClient>(sp =>
 {
@@ -141,7 +167,9 @@ builder.Services.AddSingleton<ElasticsearchClient>(sp =>
 
     return new ElasticsearchClient(settings);
 });
+#endregion
 
+#region Other
 // Other
 builder.Services.AddResponseCompression(options =>
 {
@@ -167,7 +195,7 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartHeadersCountLimit = int.MaxValue;
     options.MultipartHeadersLengthLimit = int.MaxValue;
 });
-
+#endregion
 
 var app = builder.Build();
 
