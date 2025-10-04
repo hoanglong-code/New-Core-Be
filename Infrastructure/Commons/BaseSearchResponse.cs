@@ -57,6 +57,7 @@ namespace Infrastructure.Commons
 
             return new BaseSearchResponse<TModel>(totalCount, 0, 0, result);
         }
+
         public static async Task<BaseSearchResponse<TModel>> GetResponseWithElasticSearch(IQueryable<TModel> queryData, BaseCriteria baseCriteria)
         {
             var sort = !string.IsNullOrEmpty(baseCriteria.Sorts) ? string.Join(",", baseCriteria.Sorts).Replace("=", " ") : "Id DESC";

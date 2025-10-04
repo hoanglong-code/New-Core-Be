@@ -83,7 +83,7 @@ namespace Minio.Implementations
         {
             return await _minio.BucketExistsAsync(new BucketExistsArgs().WithBucket(bucketName));
         }
-        public async Task CreateBucketAsync(string bucketName)
+        public async Task<bool> CreateBucketAsync(string bucketName)
         {
             try
             {
@@ -92,13 +92,15 @@ namespace Minio.Implementations
                 {
                     await _minio.MakeBucketAsync(new MakeBucketArgs().WithBucket(bucketName));
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 log.Error($"Error creating bucket: {ex.Message}");
+                return false;
             }
         }
-        public async Task RemoveBucketAsync(string bucketName)
+        public async Task<bool> RemoveBucketAsync(string bucketName)
         {
             try
             {
@@ -107,13 +109,15 @@ namespace Minio.Implementations
                 {
                     await _minio.RemoveBucketAsync(new RemoveBucketArgs().WithBucket(bucketName));
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 log.Error($"Error removing bucket: {ex.Message}");
+                return false;
             }
         }
-        public async Task UploadObjectAsync(IFormFileCollection formFiles, string bucketName, string? prefix)
+        public async Task<bool> UploadObjectAsync(IFormFileCollection formFiles, string bucketName, string? prefix)
         {
             try
             {
@@ -141,13 +145,15 @@ namespace Minio.Implementations
                         );
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 log.Error($"Error uploading object: {ex.Message}");
+                return false;
             }
         }
-        public async Task UploadObjectWithPathAsync(IFormFileCollection formFiles, List<string> relativePaths, string bucketName, string? prefix)
+        public async Task<bool> UploadObjectWithPathAsync(IFormFileCollection formFiles, List<string> relativePaths, string bucketName, string? prefix)
         {
             try
             {
@@ -191,21 +197,25 @@ namespace Minio.Implementations
                         );
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 log.Error($"Error uploading object with folder: {ex.Message}");
+                return false;
             }
         }
-        public async Task RemoveObjectAsync(string bucketName, string objectName)
+        public async Task<bool> RemoveObjectAsync(string bucketName, string objectName)
         {
             try
             {
                 await _minio.RemoveObjectAsync(new RemoveObjectArgs().WithBucket(bucketName).WithObject(objectName));
+                return true;
             }
             catch (Exception ex)
             {
                 log.Error($"Error removing object: {ex.Message}");
+                return false;
             }
         }
         public async Task<string> GetPresignedObjectUrlAsync(string bucketName, string objectName, int expiresInSeconds = 7 * 24 * 3600)
@@ -225,7 +235,7 @@ namespace Minio.Implementations
                 return string.Empty;
             }
         }
-        public async Task CopyObjectAsync(string bucketName, string sourcePrefix, string destinationPrefix, string fileName)
+        public async Task<bool> CopyObjectAsync(string bucketName, string sourcePrefix, string destinationPrefix, string fileName)
         {
             try
             {
@@ -242,11 +252,12 @@ namespace Minio.Implementations
                     .WithObject(destObject)
                     .WithCopyObjectSource(copySource)
                 );
+                return true;
             }
             catch (Exception ex)
             {
                 log.Error($"Error copying object: {ex.Message}");
-                throw;
+                return false;
             }
         }
         public async Task<(MemoryStream Stream, string FileName, string ContentType)> GetObjectAsync(string bucketName, string objectName)

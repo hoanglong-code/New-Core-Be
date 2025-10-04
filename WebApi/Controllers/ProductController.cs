@@ -2,12 +2,14 @@
 using Infrastructure.CustomAuthorize;
 using Infrastructure.Features.Products.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private const string FunctionCode = "QLSP";

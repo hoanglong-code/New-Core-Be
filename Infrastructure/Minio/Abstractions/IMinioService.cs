@@ -17,13 +17,13 @@ namespace Minio.Abstractions
         Task<BaseSearchResponse<Minio.DataModel.Item>> ListObjectsByPageAsync(MinioCriteria request);
         Task<List<Minio.DataModel.Item>> ListAllObjectsAsync(string bucketName, string? prefix);
         Task<bool> BucketExistsAsync(string bucketName);
-        Task CreateBucketAsync(string bucketName);
-        Task RemoveBucketAsync(string bucketName);
-        Task UploadObjectAsync(IFormFileCollection formFiles, string bucketName, string? prefix);
-        Task UploadObjectWithPathAsync(IFormFileCollection formFiles, List<string> relativePaths, string bucketName, string? prefix);
-        Task RemoveObjectAsync(string bucketName, string objectName);
+        Task<bool> CreateBucketAsync(string bucketName);
+        Task<bool> RemoveBucketAsync(string bucketName);
+        Task<bool> UploadObjectAsync(IFormFileCollection formFiles, string bucketName, string? prefix);
+        Task<bool> UploadObjectWithPathAsync(IFormFileCollection formFiles, List<string> relativePaths, string bucketName, string? prefix);
+        Task<bool> RemoveObjectAsync(string bucketName, string objectName);
         Task<string> GetPresignedObjectUrlAsync(string bucketName, string objectName, int expiresInSeconds);
-        Task CopyObjectAsync(string bucketName, string sourcePrefix, string destinationPrefix, string fileName);
+        Task<bool> CopyObjectAsync(string bucketName, string sourcePrefix, string destinationPrefix, string fileName);
         Task<(MemoryStream Stream, string FileName, string ContentType)> GetObjectAsync(string bucketName, string objectName);
     }
 }

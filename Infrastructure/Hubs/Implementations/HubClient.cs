@@ -1,4 +1,5 @@
 ﻿using Application.Contexts.Abstractions;
+using Domain.Constants;
 using Infrastructure.Hubs.Abstractions;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -33,7 +34,7 @@ namespace Infrastructure.Hubs.Implementations
 
             if (string.IsNullOrEmpty(userId))
             {
-                await SendMessageToUserAsync(connectionId, "Không xác định được UserId");
+                await SendMessageToUserAsync(connectionId, MessageErrorConstant.INVALID_USERID);
                 Context.Abort(); // Ngắt kết nối
                 return;
             }
@@ -44,7 +45,7 @@ namespace Infrastructure.Hubs.Implementations
             if (existingConnection.Any())
             {
                 // Gửi thông báo logout tới connection mới
-                await Clients.Client(connectionId).SendAsync("LogoutClient", "Tài khoản này đã đăng nhập ở thiết bị khác!");
+                await Clients.Client(connectionId).SendAsync("LogoutClient", MessageErrorConstant.INVALID_LOGIN);
                 Context.Abort(); // Ngắt kết nối
                 return;
             }

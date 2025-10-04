@@ -1,5 +1,6 @@
 ﻿using Application.Contexts.Abstractions;
 using Domain.Commons;
+using Domain.Constants;
 using Infrastructure.Services.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -58,7 +59,7 @@ namespace Infrastructure.Middlewares
         private async Task HandleUnauthorized(HttpContext context)
         {
             context.Response.StatusCode = 401;
-            await context.Response.WriteAsync("Unauthorize");
+            await context.Response.WriteAsync(MessageErrorConstant.AUTHORIZED);
         }
         private async Task HandleCheckRoleUser(HttpContext context, UserClaims userClaims)
         {
