@@ -19,6 +19,10 @@ namespace Infrastructure.Configurations
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Function> Functions { get; set; }
+        public DbSet<FunctionRole> FunctionRoles { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
         public override int SaveChanges()
         {
             return base.SaveChanges();

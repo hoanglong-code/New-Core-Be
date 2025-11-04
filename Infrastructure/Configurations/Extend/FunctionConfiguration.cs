@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configurations.Extend
 {
-    public class BrandConfiguration : EntityTypeConfiguration<Brand, int>
+    public class FunctionConfiguration : EntityTypeConfiguration<Function, int>
     {
-        public override void Configure(EntityTypeBuilder<Brand> builder)
+        public override void Configure(EntityTypeBuilder<Function> builder)
         {
             base.Configure(builder); // Gọi cấu hình mặc định từ class cha
 
@@ -24,7 +24,9 @@ namespace Infrastructure.Configurations.Extend
 
             builder.Property(x => x.Note).HasMaxLength(2000);
 
-            builder.HasMany(x => x.Products).WithOne(x => x.Brand).HasForeignKey(x => x.BrandId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasMany(x => x.Children).WithOne(x => x.Parent).HasForeignKey(x => x.FunctionParentId).OnDelete(DeleteBehavior.Restrict); // ngăn không cho xóa nếu có lớp con
+
+            builder.HasOne(x => x.Parent).WithMany(x => x.Children).HasForeignKey(x => x.FunctionParentId).HasPrincipalKey(x => x.Id);
         }
     }
 }

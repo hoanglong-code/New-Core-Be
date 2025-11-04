@@ -26,5 +26,15 @@ namespace Domain.Enums
             LOG_IN = 9,
             LOG_OUT = 10
         }
+        public enum Gender
+        {
+            MALE = 0,
+            FEMALE = 1,
+        }
+        public enum TypeRole
+        {
+            ADMIN = 0,
+            USER = 1,
+        }
     }
 }
