@@ -16,27 +16,31 @@ namespace Infrastructure.Configurations.Extend
         {
             base.Configure(builder); // Gọi cấu hình mặc định từ class cha
 
-            builder.Property(e => e.Address).IsRequired(true).HasMaxLength(1000);
+            builder.Property(e => e.FullName).IsRequired(true).HasMaxLength(200);
 
-            builder.Property(e => e.Code).IsRequired(true).HasMaxLength(50);
-
-            builder.Property(e => e.Email).IsRequired(true).HasMaxLength(1000).IsUnicode(false);
-
-            builder.Property(e => e.FullName).IsRequired(true).HasMaxLength(100);
-
-            builder.Property(e => e.KeyLock).IsRequired(true).HasMaxLength(8);
-
-            builder.Property(e => e.Password).IsRequired(true).HasMaxLength(50).IsUnicode(false);
-
-            builder.Property(e => e.Phone).IsRequired(true).HasMaxLength(50).IsUnicode(false);
-
-            builder.Property(e => e.RegEmail).IsRequired(true).HasMaxLength(50);
-
-            builder.Property(e => e.LastLoginAt).HasColumnType("datetime");
-
-            builder.Property(e => e.UserName).IsRequired(true).HasMaxLength(50);
+            builder.Property(e => e.UserName).IsRequired(true).HasMaxLength(100);
 
             builder.HasIndex(x => x.UserName).IsUnique();
+
+            builder.Property(e => e.Password).IsRequired(true).HasMaxLength(100).IsUnicode(false);
+
+            builder.Property(e => e.Email).IsRequired(false).HasMaxLength(200).IsUnicode(false);
+
+            builder.Property(e => e.Phone).IsRequired(false).HasMaxLength(50).IsUnicode(false);
+
+            builder.Property(e => e.CardId).IsRequired(false).HasMaxLength(20);
+
+            builder.Property(e => e.Address).IsRequired(false).HasMaxLength(500);
+
+            builder.Property(e => e.Avatar).IsRequired(false).HasMaxLength(500);
+
+            builder.Property(e => e.Birthday).IsRequired(false).HasColumnType("datetime");
+
+            builder.Property(e => e.LastLoginAt).IsRequired(false).HasColumnType("datetime");
+
+            builder.Property(e => e.RegEmail).IsRequired(false).HasMaxLength(200);
+
+            builder.HasMany(x => x.UserRole).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

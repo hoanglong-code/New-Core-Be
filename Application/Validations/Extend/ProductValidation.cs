@@ -30,7 +30,7 @@ namespace Application.Validations.Extend
                 .MaximumLength(50)
                 .WithMessage("Tên sản phẩm không được dài quá 50 ký tự");
             RuleFor(x => x.Note)
-               .MaximumLength(50)
+               .MaximumLength(2000)
                .WithMessage("Mô tả sản phẩm không được dài quá 2000 ký tự");
             RuleFor(x => x.BrandId)
                 .Cascade(CascadeMode.Continue)

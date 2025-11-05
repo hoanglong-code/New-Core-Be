@@ -14,5 +14,7 @@ namespace Domain.Entities.Extend
         public required string Code { get; set; }
         public TypeRole Type { get; set; }
         public string? Note { get; set; }
+        public virtual ICollection<FunctionRole>? FunctionRole { get; set; }
+        public virtual ICollection<UserRole>? UserRole { get; set; }
     }
 }

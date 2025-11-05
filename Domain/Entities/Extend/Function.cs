@@ -18,5 +18,6 @@ namespace Domain.Entities.Extend
         public string? Icon { get; set; }
         public virtual Function? Parent { get; set; }
         public virtual ICollection<Function>? Children { get; set; }
+        public virtual ICollection<FunctionRole>? FunctionRole { get; set; }
     }
 }

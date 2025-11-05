@@ -18,5 +18,6 @@ namespace Domain.Entities.Extend
         public DateTime? LastLoginAt { get; set; }
         public string? RegEmail { get; set; }
         public int? CountLoginFail { get; set; }
+        public virtual ICollection<UserRole>? UserRole { get; set; }
     }
 }

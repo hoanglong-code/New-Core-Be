@@ -22,11 +22,21 @@ namespace Infrastructure.Configurations.Extend
 
             builder.HasIndex(x => x.Code).IsUnique();
 
-            builder.Property(x => x.Note).HasMaxLength(2000);
+            builder.Property(x => x.FunctionParentId).IsRequired(false);
+
+            builder.Property(x => x.Url).IsRequired(false).HasMaxLength(500);
+
+            builder.Property(x => x.Note).IsRequired(false).HasMaxLength(2000);
+
+            builder.Property(x => x.Location).IsRequired(false);
+
+            builder.Property(x => x.Icon).IsRequired(false).HasMaxLength(100);
 
             builder.HasMany(x => x.Children).WithOne(x => x.Parent).HasForeignKey(x => x.FunctionParentId).OnDelete(DeleteBehavior.Restrict); // ngăn không cho xóa nếu có lớp con
 
             builder.HasOne(x => x.Parent).WithMany(x => x.Children).HasForeignKey(x => x.FunctionParentId).HasPrincipalKey(x => x.Id);
+
+            builder.HasMany(x => x.FunctionRole).WithOne(x => x.Function).HasForeignKey(x => x.FunctionId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
