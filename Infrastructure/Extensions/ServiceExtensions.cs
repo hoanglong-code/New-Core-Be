@@ -6,8 +6,11 @@ using Application.Validations.Extend;
 using FluentValidation;
 using Infrastructure.Dapper.Abstractions;
 using Infrastructure.Dapper.Implementations;
+using Infrastructure.Features.Brands.Queries;
+using Infrastructure.Features.Functions.Queries;
 using Infrastructure.Features.MinIO.Queries;
 using Infrastructure.Features.Products.Queries;
+using Infrastructure.Features.Roles.Queries;
 using Infrastructure.Reponsitories.Base;
 using Infrastructure.Reponsitories.Implementations;
 using Infrastructure.Services.Abstractions;
@@ -39,13 +42,22 @@ namespace Infrastructure.Extensions
             #region Repository
             // Repository
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IBrandRepository, BrandRepository>();
+            services.AddScoped<IFunctionRepository, FunctionRepository>();
+            services.AddScoped<IFunctionRoleRepository, FunctionRoleRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
             #endregion
 
             #region Service
             // Service      
             services.AddScoped<ILoginService, LoginService>();
+            services.AddScoped<IBrandService, BrandService>();
+            services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IRoleService, RoleService>();
             #endregion
 
             #region Dapper
@@ -60,30 +72,22 @@ namespace Infrastructure.Extensions
 
             #region Validation
             // Validation
+            services.AddValidatorsFromAssemblyContaining<BrandValidation>();
+            services.AddValidatorsFromAssemblyContaining<FunctionValidation>();
             services.AddValidatorsFromAssemblyContaining<ProductValidation>();
+            services.AddValidatorsFromAssemblyContaining<RoleValidation>();
+            services.AddValidatorsFromAssemblyContaining<UserValidation>();
             #endregion
 
             #region MediatR
             // MediatR
             services.AddMediatR(configuration =>
             {
-                // Product
-                configuration.RegisterServicesFromAssembly(typeof(DeleteMultipleProductQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(DeleteProductQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(GetProductByIdQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(GetProductByPageQuery).Assembly);
+                configuration.RegisterServicesFromAssembly(typeof(SaveBrandQuery).Assembly);
+                configuration.RegisterServicesFromAssembly(typeof(SaveFunctionQuery).Assembly);
                 configuration.RegisterServicesFromAssembly(typeof(SaveProductQuery).Assembly);
-                // MinIO
+                configuration.RegisterServicesFromAssembly(typeof(SaveRoleQuery).Assembly);
                 configuration.RegisterServicesFromAssembly(typeof(CopyObjectQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(CreateBucketQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(DeleteBucketQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(DeleteObjectQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(GetBucketByPageQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(GetObjectQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(GetObjectsByPageQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(GetPresignedObjectUrlQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(UploadObjectQuery).Assembly);
-                configuration.RegisterServicesFromAssembly(typeof(UploadObjectWithPathQuery).Assembly);
             });
             #endregion
 

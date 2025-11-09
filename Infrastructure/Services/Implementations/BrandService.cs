@@ -1,5 +1,4 @@
-﻿using Application.Contexts.Abstractions;
-using Application.EntityDtos;
+﻿using Application.EntityDtos;
 using Application.IReponsitories.Abstractions;
 using Application.IReponsitories.Base;
 using Domain.Commons;
@@ -9,10 +8,8 @@ using Domain.Exceptions.Extend;
 using FluentValidation;
 using Infrastructure.Commons;
 using Infrastructure.Helpers;
-using Infrastructure.Reponsitories.Base;
 using Infrastructure.Services.Abstractions;
 using log4net;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,24 +19,24 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Services.Implementations
 {
-    public class ProductService : IProductService
+    public class BrandService : IBrandService
     {
-        private readonly IProductRepository _entityRepo;
-        private readonly IValidator<Product> _validator;
+        private readonly IBrandRepository _entityRepo;
+        private readonly IValidator<Brand> _validator;
         public readonly IUnitOfWork _unitOfWork;
-        private static readonly ILog log = LogMaster.GetLogger("ProductService", "ProductService");
-        public ProductService(IProductRepository entityRepo, IValidator<Product> validator, IUnitOfWork unitOfWork)
+        private static readonly ILog log = LogMaster.GetLogger("BrandService", "BrandService");
+        public BrandService(IBrandRepository entityRepo, IValidator<Brand> validator, IUnitOfWork unitOfWork)
         {
             _entityRepo = entityRepo;
             _validator = validator;
             _unitOfWork = unitOfWork;
         }
-        public async Task<BaseSearchResponse<ProductDto>> GetByPage(BaseCriteria request)
+        public async Task<BaseSearchResponse<BrandDto>> GetByPage(BaseCriteria request)
         {
             try
             {
-                IQueryable<ProductDto> query = _entityRepo.All().Select(ProductDto.Expression);
-                return await BaseSearchResponse<ProductDto>.GetResponseWithElasticSearch(query, request);
+                IQueryable<BrandDto> query = _entityRepo.All().Select(BrandDto.Expression);
+                return await BaseSearchResponse<BrandDto>.GetResponse(query, request);
             }
             catch (Exception ex)
             {
@@ -47,7 +44,7 @@ namespace Infrastructure.Services.Implementations
                 throw;
             }
         }
-        public async Task<Product> GetById(int id)
+        public async Task<Brand> GetById(int id)
         {
             try
             {
@@ -64,7 +61,7 @@ namespace Infrastructure.Services.Implementations
                 throw;
             }
         }
-        public async Task<Product> SaveData(Product entity)
+        public async Task<Brand> SaveData(Brand entity)
         {
             try
             {
@@ -76,7 +73,7 @@ namespace Infrastructure.Services.Implementations
                 }
                 if (entity.Id <= 0)
                 {
-                    await _entityRepo.AddWithElasticSearchAsync(entity);
+                    await _entityRepo.AddAsync(entity);
                 }
                 else
                 {
@@ -85,7 +82,7 @@ namespace Infrastructure.Services.Implementations
                     {
                         throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                     }
-                    await _entityRepo.UpdateWithElasticSearchAsync(entity);
+                    await _entityRepo.UpdateAsync(entity);
                 }
                 await _unitOfWork.CommitChangesAsync();
                 return entity;
@@ -96,16 +93,16 @@ namespace Infrastructure.Services.Implementations
                 throw;
             }
         }
-        public async Task<Product> DeleteData(int id)
+        public async Task<Brand> DeleteData(int id)
         {
             try
             {
-                Product curEntity = await _entityRepo.GetByKeyAsync(id);
+                Brand curEntity = await _entityRepo.GetByKeyAsync(id);
                 if (curEntity == null)
                 {
                     throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                 }
-                await _entityRepo.RemoveSoftWithElasticSearchAsync(curEntity);
+                await _entityRepo.RemoveSoftAsync(curEntity);
                 await _unitOfWork.CommitChangesAsync();
                 return curEntity;
             }
@@ -115,13 +112,13 @@ namespace Infrastructure.Services.Implementations
                 throw;
             }
         }
-        public async Task<List<Product>> DeleteMultipleData(string ids)
+        public async Task<List<Brand>> DeleteMultipleData(string ids)
         {
             try
             {
                 var idList = ids.Split(",").Select(int.Parse).ToList();
                 var entities = await _entityRepo.All().Where(s => idList.Contains(s.Id)).ToListAsync();
-                await _entityRepo.RemoveSoftRangeWithElasticSearchAsync(entities);
+                await _entityRepo.RemoveSoftRangeAsync(entities);
                 await _unitOfWork.CommitChangesAsync();
                 return entities;
             }
