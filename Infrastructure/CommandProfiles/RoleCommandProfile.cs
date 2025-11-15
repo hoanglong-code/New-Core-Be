@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Domain.Enums.ConstantEnums;
 
 namespace Infrastructure.CommandProfiles
 {
@@ -18,7 +19,7 @@ namespace Infrastructure.CommandProfiles
             CreateMap<Role, SaveRoleCommand>()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => (int)src.Type));
             CreateMap<SaveRoleCommand, Role>()
-                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => (TypeRole)src.Type))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
                 .ForMember(dest => dest.CreatedById, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedById, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
