@@ -4,6 +4,7 @@ using Application.IReponsitories.Abstractions;
 using Application.IReponsitories.Base;
 using Application.Validations.Extend;
 using FluentValidation;
+using Infrastructure.CustomAuthorize;
 using Infrastructure.Dapper.Abstractions;
 using Infrastructure.Dapper.Implementations;
 using Infrastructure.Features.Brands.Queries;
@@ -15,6 +16,7 @@ using Infrastructure.Reponsitories.Base;
 using Infrastructure.Reponsitories.Implementations;
 using Infrastructure.Services.Abstractions;
 using Infrastructure.Services.Implementations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -101,6 +103,8 @@ namespace Infrastructure.Extensions
 
             #region Other
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IAuthorizationHandler, PrivilegeHandler>();
+            services.AddSingleton<IAuthorizationPolicyProvider, CustomPolicyProvider>();
             #endregion
         }
         public static void AddDebugCustomService(this IServiceCollection services, IConfiguration configuration)

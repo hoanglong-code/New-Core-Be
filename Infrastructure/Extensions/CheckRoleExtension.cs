@@ -1,4 +1,5 @@
 ﻿using Domain.Commons;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Infrastructure.Extensions
 {
     public class CheckRoleExtension
     {
-        public static bool CheckRoleByCode(string access_key, string key, int type)
+        public static bool CheckRoleByCode(string access_key, string key, ConstantEnums.TypeAction type)
         {
             var check = false;
 
@@ -20,7 +21,7 @@ namespace Infrastructure.Extensions
                 var role = functionRole[i].Split(':')[1];
                 if (code == key)
                 {
-                    check = role.Substring(type, 1) == "1" ? true : false;
+                    check = role.Substring((int)type, 1) == "1" ? true : false;
                     break;
                 }
             }
