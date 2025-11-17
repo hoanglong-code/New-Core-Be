@@ -23,13 +23,13 @@ namespace Infrastructure.Services.Implementations
     public class RoleService : IRoleService
     {
         private readonly IRoleRepository _entityRepo;
-        private readonly IFunctionRoleRepository _functionRoleRepository;
+        private readonly IFunctionRoleRepository _functionRoleRepo;
         private readonly IValidator<Role> _validator;
         private static readonly ILog log = LogMaster.GetLogger("RoleService", "RoleService");
-        public RoleService(IRoleRepository entityRepo, IFunctionRoleRepository functionRoleRepository, IValidator<Role> validator)
+        public RoleService(IRoleRepository entityRepo, IFunctionRoleRepository functionRoleRepo, IValidator<Role> validator)
         {
             _entityRepo = entityRepo;
-            _functionRoleRepository = functionRoleRepository;
+            _functionRoleRepo = functionRoleRepo;
             _validator = validator;
         }
         public async Task<BaseSearchResponse<RoleDto>> GetByPage(BaseCriteria request)
@@ -78,7 +78,7 @@ namespace Infrastructure.Services.Implementations
                     if (entity.FunctionRole != null && entity.FunctionRole.Any())
                     {
                         entity.FunctionRole.ToList().ForEach(x => x.RoleId = entity.Id);
-                        await _functionRoleRepository.AddRangeAsync(entity.FunctionRole);
+                        await _functionRoleRepo.AddRangeAsync(entity.FunctionRole);
                     }
                     return entity;
                 }
@@ -93,7 +93,7 @@ namespace Infrastructure.Services.Implementations
                     if (entity.FunctionRole != null && entity.FunctionRole.Any())
                     {
                         entity.FunctionRole.ToList().ForEach(x => x.RoleId = entity.Id);
-                        await _functionRoleRepository.UpdateRangeAsync(entity.FunctionRole);
+                        await _functionRoleRepo.UpdateRangeAsync(entity.FunctionRole);
                     }
                     return curEntity;
                 }

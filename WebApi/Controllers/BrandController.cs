@@ -22,7 +22,7 @@ namespace WebApi.Controllers
 
         [HttpPost("GetByPage")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.READ)]
-        public async Task<IActionResult> GetByPage([FromBody] GetBrandByPageCommand command)
+        public async Task<IActionResult> GetByPage(GetBrandByPageCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
@@ -36,14 +36,14 @@ namespace WebApi.Controllers
 
         [HttpPost("CreateData")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.CREATE)]
-        public async Task<IActionResult> CreateData([FromBody] SaveBrandCommand command)
+        public async Task<IActionResult> CreateData(SaveBrandCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
 
         [HttpPost("UpdateData")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.UPDATE)]
-        public async Task<IActionResult> UpdateData([FromBody] SaveBrandCommand command)
+        public async Task<IActionResult> UpdateData(SaveBrandCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
@@ -55,7 +55,7 @@ namespace WebApi.Controllers
             return Ok(await _mediator.Send(command));
         }
 
-        [HttpPost("DeleteMultiple")]
+        [HttpPost("DeleteMultipleData")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.DELETED)]
         public async Task<IActionResult> DeleteMultipleData(DeleteMultipleBrandCommand command)
         {

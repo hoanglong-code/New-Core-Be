@@ -23,13 +23,13 @@ namespace Infrastructure.Services.Implementations
     public class UserService : IUserService
     {
         private readonly IUserRepository _entityRepo;
-        private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IUserRoleRepository _userRoleRepo;
         private readonly IValidator<User> _validator;
         private static readonly ILog log = LogMaster.GetLogger("UserService", "UserService");
-        public UserService(IUserRepository entityRepo, IUserRoleRepository userRoleRepository, IValidator<User> validator)
+        public UserService(IUserRepository entityRepo, IUserRoleRepository userRoleRepo, IValidator<User> validator)
         {
             _entityRepo = entityRepo;
-            _userRoleRepository = userRoleRepository;
+            _userRoleRepo = userRoleRepo;
             _validator = validator;
         }
         public async Task<BaseSearchResponse<UserDto>> GetByPage(BaseCriteria request)
@@ -78,7 +78,7 @@ namespace Infrastructure.Services.Implementations
                     if (entity.UserRole != null && entity.UserRole.Any())
                     {
                         entity.UserRole.ToList().ForEach(x => x.UserId = entity.Id);
-                        await _userRoleRepository.AddRangeAsync(entity.UserRole);
+                        await _userRoleRepo.AddRangeAsync(entity.UserRole);
                     }
                     return entity;
                 }
@@ -93,7 +93,7 @@ namespace Infrastructure.Services.Implementations
                     if (entity.UserRole != null && entity.UserRole.Any())
                     {
                         entity.UserRole.ToList().ForEach(x => x.UserId = entity.Id);
-                        await _userRoleRepository.UpdateRangeAsync(entity.UserRole);
+                        await _userRoleRepo.UpdateRangeAsync(entity.UserRole);
                     }
                     return curEntity;
                 }

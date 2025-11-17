@@ -42,33 +42,30 @@ namespace Infrastructure.Extensions
             return str;
         }
         //create menu
-        public static List<Menu> CreateMenu(List<Menu> list, int k)
-        {
-            var listMenu = list.Where(e => e.MenuParent == k).ToList();
-            if (listMenu.Count > 0)
-            {
-                List<Menu> menus = new List<Menu>();
-                foreach (var item in listMenu)
-                {
-                    char[] str = item.ActiveKey.ToCharArray();
-                    if (int.Parse(str[8].ToString()) == 1)
-                    {
-                        Menu menu = new Menu();
-                        menu.MenuId = item.MenuId;
-                        menu.Code = item.Code;
-                        menu.Name = item.Name;
-                        menu.Url = item.Url;
-                        menu.Icon = item.Icon;
-                        menu.IsParamRoute = item.IsParamRoute;
-                        menu.MenuParent = item.MenuParent;
-                        menu.ActiveKey = item.ActiveKey;
-                        menu.ListMenus = CreateMenu(list, item.MenuId);
-                        menus.Add(menu);
-                    }
-                }
-                return menus;
-            }
-            return new List<Menu>();
-        }
+        //public static List<Menu> CreateMenu(List<Menu> list, int k)
+        //{
+        //    var listMenu = list.Where(e => e.MenuParent == k).ToList();
+        //    if (listMenu.Count > 0)
+        //    {
+        //        List<Menu> menus = new List<Menu>();
+        //        foreach (var item in listMenu)
+        //        {
+        //            char[] str = item.ActiveKey.ToCharArray();
+        //            if (int.Parse(str[8].ToString()) == 1)
+        //            {
+        //                Menu menu = new Menu();
+        //                menu.Code = item.Code;
+        //                menu.Name = item.Name;
+        //                menu.Url = item.Url;
+        //                menu.Icon = item.Icon;
+        //                menu.MenuParent = item.MenuParent;
+        //                menu.ListMenus = CreateMenu(list, item.MenuId);
+        //                menus.Add(menu);
+        //            }
+        //        }
+        //        return menus;
+        //    }
+        //    return new List<Menu>();
+        //}
     }
 }

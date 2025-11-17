@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Infrastructure.Features.Users.Commands;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,11 @@ namespace WebApi.Controllers
         public TokenController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+        [HttpPost("Auth")]
+        public async Task<IActionResult> Auth(LoginCommand command)
+        {
+            return Ok(await _mediator.Send(command));
         }
     }
 }

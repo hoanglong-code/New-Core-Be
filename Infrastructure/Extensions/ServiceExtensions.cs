@@ -65,6 +65,7 @@ namespace Infrastructure.Extensions
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IMenuService, MenuService>();
             #endregion
 
             #region Dapper

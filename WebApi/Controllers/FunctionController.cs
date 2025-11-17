@@ -22,7 +22,7 @@ namespace WebApi.Controllers
 
         [HttpPost("GetByPage")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.READ)]
-        public async Task<IActionResult> GetByPage([FromBody] GetFunctionByPageCommand command)
+        public async Task<IActionResult> GetByPage(GetFunctionByPageCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
@@ -36,14 +36,14 @@ namespace WebApi.Controllers
 
         [HttpPost("CreateData")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.CREATE)]
-        public async Task<IActionResult> CreateData([FromBody] SaveFunctionCommand command)
+        public async Task<IActionResult> CreateData(SaveFunctionCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
 
         [HttpPost("UpdateData")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.UPDATE)]
-        public async Task<IActionResult> UpdateData([FromBody] SaveFunctionCommand command)
+        public async Task<IActionResult> UpdateData(SaveFunctionCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
@@ -55,7 +55,7 @@ namespace WebApi.Controllers
             return Ok(await _mediator.Send(command));
         }
 
-        [HttpPost("DeleteMultiple")]
+        [HttpPost("DeleteMultipleData")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.DELETED)]
         public async Task<IActionResult> DeleteMultipleData(DeleteMultipleFunctionCommand command)
         {

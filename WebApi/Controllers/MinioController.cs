@@ -21,35 +21,35 @@ namespace WebApi.Controllers
         }
         [HttpPost("GetBucketByPage")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.READ)]
-        public async Task<IActionResult> GetByPage([FromBody] GetBucketByPageCommand command)
+        public async Task<IActionResult> GetByPage(GetBucketByPageCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
 
         [HttpPost("CreateBucket")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.CREATE)]
-        public async Task<IActionResult> CreateBucket([FromBody] CreateBucketCommand command)
+        public async Task<IActionResult> CreateBucket(CreateBucketCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
 
         [HttpPost("DeleteBucket")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.DELETED)]
-        public async Task<IActionResult> DeleteBucket([FromBody] DeleteBucketCommand command)
+        public async Task<IActionResult> DeleteBucket(DeleteBucketCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
 
         [HttpPost("GetObjectByPage")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.READ)]
-        public async Task<IActionResult> GetObjectByPage([FromBody] GetObjectsByPageCommand command)
+        public async Task<IActionResult> GetObjectByPage(GetObjectsByPageCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
 
         [HttpPost("GetObject")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.VIEW)]
-        public async Task<IActionResult> GetObject([FromBody] GetObjectCommand command)
+        public async Task<IActionResult> GetObject(GetObjectCommand command)
         {
             var result = await _mediator.Send(command);
             return File(result.Stream, result.ContentType, result.FileName);
@@ -57,7 +57,7 @@ namespace WebApi.Controllers
 
         [HttpPost("GetPresignedObjectUrl")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.VIEW)]
-        public async Task<IActionResult> GetPresignedObjectUrl([FromBody] GetPresignedObjectUrlCommand command)
+        public async Task<IActionResult> GetPresignedObjectUrl(GetPresignedObjectUrlCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
@@ -91,14 +91,14 @@ namespace WebApi.Controllers
 
         [HttpPost("DeleteObject")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.DELETED)]
-        public async Task<IActionResult> DeleteObject([FromBody] DeleteObjectCommand command)
+        public async Task<IActionResult> DeleteObject(DeleteObjectCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
 
         [HttpPost("CopyObject")]
         [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.CREATE)]
-        public async Task<IActionResult> CopyObject([FromBody] CopyObjectCommand command)
+        public async Task<IActionResult> CopyObject(CopyObjectCommand command)
         {
             return Ok(await _mediator.Send(command));
         }
