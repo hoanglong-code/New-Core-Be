@@ -18,14 +18,10 @@ namespace WebApi.Controllers
             _mediator = mediator;
         }
 
-        /// <summary>
-        /// Lấy danh sách menu của người dùng hiện tại
-        /// </summary>
-        [HttpGet("GetCurrentUserMenu")]
-        public async Task<ActionResult<List<Menu>>> GetCurrentUserMenu()
+        [HttpGet("GetMenu")]
+        public async Task<IActionResult> GetMenu()
         {
-            var result = await _mediator.Send(new GetMenuCommand());
-            return Ok(result);
+            return Ok(await _mediator.Send(new GetMenuCommand()));
         }
     }
 }

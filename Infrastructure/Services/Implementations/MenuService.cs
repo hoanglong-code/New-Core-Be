@@ -1,30 +1,29 @@
-﻿using Application.EntityDtos.Roles;
+﻿using Application.EntityDtos.Users;
 using Application.IReponsitories.Abstractions;
 using Domain.Commons;
-using Infrastructure.Commons;
+using Infrastructure.Extensions;
 using Infrastructure.Services.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services.Implementations
 {
     public class MenuService : IMenuService
     {
-        private readonly IUserRoleRepository _userRoleRepository;
-        private readonly IFunctionRoleRepository _functionRoleRepository;
-        private readonly IFunctionRepository _functionRepository;
-        public MenuService(IUserRoleRepository userRoleRepository, IFunctionRoleRepository functionRoleRepository, IFunctionRepository functionRepository)
+        private readonly IUserRepository _entityRepo;
+
+        public MenuService(IUserRepository entityRepo)
         {
-            _userRoleRepository = userRoleRepository;
-            _functionRoleRepository = functionRoleRepository;
-            _functionRepository = functionRepository;
+            _entityRepo = entityRepo;
         }
+
         public async Task<List<Menu>> GetMenu(int userId)
         {
-            return new List<Menu>();
+            var menus = await _entityRepo.All().Where(x => x.Id == userId).Select(UserMenuDto.Expression).FirstOrDefaultAsync();
+            if(menus == null)
+            {
+                return new List<Menu>();
+            }
+            return CheckRoleExtension.CreateMenu(menus.Menus, 0);
         }
     }
 }
