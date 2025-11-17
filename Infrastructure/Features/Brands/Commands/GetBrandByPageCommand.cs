@@ -1,4 +1,4 @@
-using Application.EntityDtos;
+using Application.EntityDtos.Brands;
 using Infrastructure.Commons;
 using MediatR;
 using System;

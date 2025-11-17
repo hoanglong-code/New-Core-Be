@@ -28,6 +28,16 @@ namespace Infrastructure.Reponsitories.Base
             _userContext = userContext;
             _elasticClient = elasticsearchClient;
         }
+
+        private void Commit()
+        {
+            _dbContext.SaveChanges();
+        }
+
+        private Task CommitAsync()
+        {
+            return _dbContext.SaveChangesAsync();
+        }
         public IQueryable<TEntity> All(bool skipDeleted = true)
         {
             var query = _dbSet.AsNoTracking();
@@ -46,6 +56,7 @@ namespace Infrastructure.Reponsitories.Base
             e.CreatedAt = DateTime.Now;
             e.UpdatedAt = DateTime.Now;
             await _dbSet.AddAsync(e);
+            await CommitAsync();
         }
         public virtual void Add(TEntity e)
         {
@@ -54,6 +65,7 @@ namespace Infrastructure.Reponsitories.Base
             e.CreatedAt = DateTime.Now;
             e.UpdatedAt = DateTime.Now;
             _dbSet.Add(e);
+            Commit();
         }
         public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities)
         {
@@ -65,6 +77,7 @@ namespace Infrastructure.Reponsitories.Base
                 e.UpdatedAt = DateTime.Now;
             }
             await _dbSet.AddRangeAsync(entities);
+            await CommitAsync();
         }
         public virtual async Task AddWithElasticSearchAsync(TEntity e)
         {
@@ -73,6 +86,7 @@ namespace Infrastructure.Reponsitories.Base
             e.CreatedAt = DateTime.Now;
             e.UpdatedAt = DateTime.Now;
             await _dbSet.AddAsync(e);
+            await CommitAsync();
             // Index vào Elasticsearch
             await _elasticClient.IndexAsync(e, idx => idx.Index(typeof(TEntity).Name.ToLower()).Id(e.Id.ToString()));
         }
@@ -86,6 +100,7 @@ namespace Infrastructure.Reponsitories.Base
                 e.UpdatedAt = DateTime.Now;
             }
             await _dbSet.AddRangeAsync(entities);
+            await CommitAsync();
             // Bulk index vào Elasticsearch
             await _elasticClient.BulkAsync(b => b.Index(typeof(TEntity).Name.ToLower()).IndexMany(entities, (descriptor, e) => descriptor.Id(e.Id.ToString())));
         }
@@ -95,50 +110,191 @@ namespace Infrastructure.Reponsitories.Base
         }
         public virtual void Update(TEntity e)
         {
-            e.UpdatedAt = DateTime.Now;
-            e.UpdatedBy = _userContext.userClaims.fullName;
-            e.UpdatedById = _userContext.userClaims.userId;
-            _dbSet.Update(e);
-        }
-        public virtual Task UpdateAsync(TEntity e)
-        {
-            e.UpdatedAt = DateTime.Now;
-            e.UpdatedBy = _userContext.userClaims.fullName;
-            e.UpdatedById = _userContext.userClaims.userId;
-            _dbSet.Update(e);
-            //_dbSet.Entry(e).State = EntityState.Modified;
-            return Task.CompletedTask;
-        }
-        public virtual Task UpdateRangeAsync(IEnumerable<TEntity> entities)
-        {
-            foreach (TEntity e in entities)
+            var entry = _dbContext.Entry(e);
+            if (entry.State == EntityState.Detached)
+            {
+                var trackedEntity = _dbContext.ChangeTracker.Entries<TEntity>()
+                    .FirstOrDefault(x => x.Entity.Id.Equals(e.Id) && x.State != EntityState.Detached)?.Entity;
+                
+                if (trackedEntity != null)
+                {
+                    _dbContext.Entry(trackedEntity).CurrentValues.SetValues(e);
+                    trackedEntity.UpdatedAt = DateTime.Now;
+                    trackedEntity.UpdatedBy = _userContext.userClaims.fullName;
+                    trackedEntity.UpdatedById = _userContext.userClaims.userId;
+                }
+                else
+                {
+                    e.UpdatedAt = DateTime.Now;
+                    e.UpdatedBy = _userContext.userClaims.fullName;
+                    e.UpdatedById = _userContext.userClaims.userId;
+                    _dbSet.Update(e);
+                }
+            }
+            else
             {
                 e.UpdatedAt = DateTime.Now;
                 e.UpdatedBy = _userContext.userClaims.fullName;
                 e.UpdatedById = _userContext.userClaims.userId;
             }
-            _dbSet.UpdateRange(entities);
-            return Task.CompletedTask;
+            Commit();
+        }
+        public virtual async Task UpdateAsync(TEntity e)
+        {
+            var entry = _dbContext.Entry(e);
+            if (entry.State == EntityState.Detached)
+            {
+                var trackedEntity = _dbContext.ChangeTracker.Entries<TEntity>()
+                    .FirstOrDefault(x => x.Entity.Id.Equals(e.Id) && x.State != EntityState.Detached)?.Entity;
+                
+                if (trackedEntity != null)
+                {
+                    _dbContext.Entry(trackedEntity).CurrentValues.SetValues(e);
+                    trackedEntity.UpdatedAt = DateTime.Now;
+                    trackedEntity.UpdatedBy = _userContext.userClaims.fullName;
+                    trackedEntity.UpdatedById = _userContext.userClaims.userId;
+                }
+                else
+                {
+                    e.UpdatedAt = DateTime.Now;
+                    e.UpdatedBy = _userContext.userClaims.fullName;
+                    e.UpdatedById = _userContext.userClaims.userId;
+                    _dbSet.Update(e);
+                }
+            }
+            else
+            {
+                e.UpdatedAt = DateTime.Now;
+                e.UpdatedBy = _userContext.userClaims.fullName;
+                e.UpdatedById = _userContext.userClaims.userId;
+            }
+            await CommitAsync();
+        }
+        public virtual async Task UpdateRangeAsync(IEnumerable<TEntity> entities)
+        {
+            var entitiesToUpdate = new List<TEntity>();
+            
+            foreach (TEntity e in entities)
+            {
+                var entry = _dbContext.Entry(e);
+                if (entry.State == EntityState.Detached)
+                {
+                    var trackedEntity = _dbContext.ChangeTracker.Entries<TEntity>()
+                        .FirstOrDefault(x => x.Entity.Id.Equals(e.Id) && x.State != EntityState.Detached)?.Entity;
+                    
+                    if (trackedEntity != null)
+                    {
+                        _dbContext.Entry(trackedEntity).CurrentValues.SetValues(e);
+                        trackedEntity.UpdatedAt = DateTime.Now;
+                        trackedEntity.UpdatedBy = _userContext.userClaims.fullName;
+                        trackedEntity.UpdatedById = _userContext.userClaims.userId;
+                    }
+                    else
+                    {
+                        e.UpdatedAt = DateTime.Now;
+                        e.UpdatedBy = _userContext.userClaims.fullName;
+                        e.UpdatedById = _userContext.userClaims.userId;
+                        entitiesToUpdate.Add(e);
+                    }
+                }
+                else
+                {
+                    e.UpdatedAt = DateTime.Now;
+                    e.UpdatedBy = _userContext.userClaims.fullName;
+                    e.UpdatedById = _userContext.userClaims.userId;
+                }
+            }
+            
+            if (entitiesToUpdate.Any())
+            {
+                _dbSet.UpdateRange(entitiesToUpdate);
+            }
+            
+            await CommitAsync();
         }
         public virtual async Task UpdateWithElasticSearchAsync(TEntity e)
         {
-            e.UpdatedAt = DateTime.Now;
-            e.UpdatedBy = _userContext.userClaims.fullName;
-            e.UpdatedById = _userContext.userClaims.userId;
-            _dbSet.Update(e);
-            //_dbSet.Entry(e).State = EntityState.Modified;
-            await _elasticClient.IndexAsync(e, i => i.Index(typeof(TEntity).Name.ToLower()).Id(e.Id.ToString()));
-        }
-        public virtual async Task UpdateRangeWithElasticSearchAsync(IEnumerable<TEntity> entities)
-        {
-            foreach (TEntity e in entities)
+            var entry = _dbContext.Entry(e);
+            TEntity entityToIndex = e;
+            
+            if (entry.State == EntityState.Detached)
+            {
+                var trackedEntity = _dbContext.ChangeTracker.Entries<TEntity>()
+                    .FirstOrDefault(x => x.Entity.Id.Equals(e.Id) && x.State != EntityState.Detached)?.Entity;
+                
+                if (trackedEntity != null)
+                {
+                    _dbContext.Entry(trackedEntity).CurrentValues.SetValues(e);
+                    trackedEntity.UpdatedAt = DateTime.Now;
+                    trackedEntity.UpdatedBy = _userContext.userClaims.fullName;
+                    trackedEntity.UpdatedById = _userContext.userClaims.userId;
+                    entityToIndex = trackedEntity;
+                }
+                else
+                {
+                    e.UpdatedAt = DateTime.Now;
+                    e.UpdatedBy = _userContext.userClaims.fullName;
+                    e.UpdatedById = _userContext.userClaims.userId;
+                    _dbSet.Update(e);
+                }
+            }
+            else
             {
                 e.UpdatedAt = DateTime.Now;
                 e.UpdatedBy = _userContext.userClaims.fullName;
                 e.UpdatedById = _userContext.userClaims.userId;
             }
-            _dbSet.UpdateRange(entities);
-            await _elasticClient.BulkAsync(b => b.Index(typeof(TEntity).Name.ToLower()).IndexMany(entities, (descriptor, e) => descriptor.Id(e.Id.ToString())));
+            await CommitAsync();
+            await _elasticClient.IndexAsync(entityToIndex, i => i.Index(typeof(TEntity).Name.ToLower()).Id(entityToIndex.Id.ToString()));
+        }
+        public virtual async Task UpdateRangeWithElasticSearchAsync(IEnumerable<TEntity> entities)
+        {
+            var entitiesToUpdate = new List<TEntity>();
+            var entitiesToIndex = new List<TEntity>();
+            
+            foreach (TEntity e in entities)
+            {
+                var entry = _dbContext.Entry(e);
+                TEntity entityToIndex = e;
+                
+                if (entry.State == EntityState.Detached)
+                {
+                    var trackedEntity = _dbContext.ChangeTracker.Entries<TEntity>()
+                        .FirstOrDefault(x => x.Entity.Id.Equals(e.Id) && x.State != EntityState.Detached)?.Entity;
+                    
+                    if (trackedEntity != null)
+                    {
+                        _dbContext.Entry(trackedEntity).CurrentValues.SetValues(e);
+                        trackedEntity.UpdatedAt = DateTime.Now;
+                        trackedEntity.UpdatedBy = _userContext.userClaims.fullName;
+                        trackedEntity.UpdatedById = _userContext.userClaims.userId;
+                        entityToIndex = trackedEntity;
+                    }
+                    else
+                    {
+                        e.UpdatedAt = DateTime.Now;
+                        e.UpdatedBy = _userContext.userClaims.fullName;
+                        e.UpdatedById = _userContext.userClaims.userId;
+                        entitiesToUpdate.Add(e);
+                    }
+                }
+                else
+                {
+                    e.UpdatedAt = DateTime.Now;
+                    e.UpdatedBy = _userContext.userClaims.fullName;
+                    e.UpdatedById = _userContext.userClaims.userId;
+                }
+                
+                entitiesToIndex.Add(entityToIndex);
+            }
+            
+            if (entitiesToUpdate.Any())
+            {
+                _dbSet.UpdateRange(entitiesToUpdate);
+            }
+            
+            await CommitAsync();
+            await _elasticClient.BulkAsync(b => b.Index(typeof(TEntity).Name.ToLower()).IndexMany(entitiesToIndex, (descriptor, e) => descriptor.Id(e.Id.ToString())));
         }
         public virtual void Remove(TEntity e)
         {
@@ -146,14 +302,15 @@ namespace Infrastructure.Reponsitories.Base
             e.UpdatedBy = _userContext.userClaims.fullName;
             e.UpdatedById = _userContext.userClaims.userId;
             _dbSet.Remove(e);
+            Commit();
         }
-        public virtual Task RemoveAsync(TEntity e)
+        public virtual async Task RemoveAsync(TEntity e)
         {
             e.UpdatedAt = DateTime.Now;
             e.UpdatedBy = _userContext.userClaims.fullName;
             e.UpdatedById = _userContext.userClaims.userId;
             _dbSet.Remove(e);
-            return Task.CompletedTask;
+            await CommitAsync();
         }
         public virtual void RemoveSoft(TEntity e)
         {
@@ -163,8 +320,9 @@ namespace Infrastructure.Reponsitories.Base
             e.UpdatedById = _userContext.userClaims.userId;
             _dbSet.Update(e);
             //_dbSet.Entry(e).State = EntityState.Modified;
+            Commit();
         }
-        public virtual Task RemoveSoftAsync(TEntity e)
+        public virtual async Task RemoveSoftAsync(TEntity e)
         {
             e.Status = ConstantEnums.EntityStatus.DELETED;
             e.UpdatedAt = DateTime.Now;
@@ -172,7 +330,7 @@ namespace Infrastructure.Reponsitories.Base
             e.UpdatedById = _userContext.userClaims.userId;
             _dbSet.Update(e);
             //_dbSet.Entry(e).State = EntityState.Modified;
-            return Task.CompletedTask;
+            await CommitAsync();
         }
         public virtual void RemoveRange(IEnumerable<TEntity> entities)
         {
@@ -183,8 +341,9 @@ namespace Infrastructure.Reponsitories.Base
                 e.UpdatedById = _userContext.userClaims.userId;
             }
             _dbSet.RemoveRange(entities);
+            Commit();
         }
-        public virtual Task RemoveRangeAsync(IEnumerable<TEntity> entities)
+        public virtual async Task RemoveRangeAsync(IEnumerable<TEntity> entities)
         {
             foreach (TEntity e in entities)
             {
@@ -193,7 +352,7 @@ namespace Infrastructure.Reponsitories.Base
                 e.UpdatedById = _userContext.userClaims.userId;
             }
             _dbSet.RemoveRange(entities);
-            return Task.CompletedTask;
+            await CommitAsync();
         }
         public virtual void RemoveSoftRange(IEnumerable<TEntity> entities)
         {
@@ -205,8 +364,9 @@ namespace Infrastructure.Reponsitories.Base
                 e.UpdatedById = _userContext.userClaims.userId;
             }
             _dbSet.UpdateRange(entities);
+            Commit();
         }
-        public virtual Task RemoveSoftRangeAsync(IEnumerable<TEntity> entities)
+        public virtual async Task RemoveSoftRangeAsync(IEnumerable<TEntity> entities)
         {
             foreach (TEntity e in entities)
             {
@@ -216,7 +376,7 @@ namespace Infrastructure.Reponsitories.Base
                 e.UpdatedById = _userContext.userClaims.userId;
             }
             _dbSet.UpdateRange(entities);
-            return Task.CompletedTask;
+            await CommitAsync();
         }
         public virtual async Task RemoveWithElasticSearchAsync(TEntity e)
         {
@@ -224,6 +384,7 @@ namespace Infrastructure.Reponsitories.Base
             e.UpdatedBy = _userContext.userClaims.fullName;
             e.UpdatedById = _userContext.userClaims.userId;
             _dbSet.Remove(e);
+            await CommitAsync();
             await _elasticClient.DeleteAsync<TEntity>(e.Id.ToString(), d => d.Index(typeof(TEntity).Name.ToLower()));
         }
         public virtual async Task RemoveSoftWithElasticSearchAsync(TEntity e)
@@ -234,6 +395,7 @@ namespace Infrastructure.Reponsitories.Base
             e.UpdatedById = _userContext.userClaims.userId;
             _dbSet.Update(e);
             //_dbSet.Entry(e).State = EntityState.Modified;
+            await CommitAsync();
             await _elasticClient.DeleteAsync<TEntity>(e.Id.ToString(), d => d.Index(typeof(TEntity).Name.ToLower()));
         }
         public virtual async Task RemoveRangeWithElasticSearchAsync(IEnumerable<TEntity> entities)
@@ -245,6 +407,7 @@ namespace Infrastructure.Reponsitories.Base
                 e.UpdatedById = _userContext.userClaims.userId;
             }
             _dbSet.RemoveRange(entities);
+            await CommitAsync();
             await _elasticClient.BulkAsync(b => b.Index(typeof(TEntity).Name.ToLower()).DeleteMany(entities, (descriptor, e) => descriptor.Id(e.Id.ToString())));
         }
         public virtual async Task RemoveSoftRangeWithElasticSearchAsync(IEnumerable<TEntity> entities)
@@ -257,6 +420,7 @@ namespace Infrastructure.Reponsitories.Base
                 e.UpdatedById = _userContext.userClaims.userId;
             }
             _dbSet.UpdateRange(entities);
+            await CommitAsync();
             await _elasticClient.BulkAsync(b => b.Index(typeof(TEntity).Name.ToLower()).DeleteMany(entities, (descriptor, e) => descriptor.Id(e.Id.ToString())));
         }
         public virtual void LockEntity(TEntity e)
@@ -267,6 +431,7 @@ namespace Infrastructure.Reponsitories.Base
             e.UpdatedById = _userContext.userClaims.userId;
             _dbSet.Update(e);
             //_dbSet.Entry(e).State = EntityState.Modified;
+            Commit();
         }
         public virtual void UnLockEntity(TEntity e)
         {
@@ -276,13 +441,14 @@ namespace Infrastructure.Reponsitories.Base
             e.UpdatedById = _userContext.userClaims.userId;
             _dbSet.Update(e);
             //_dbSet.Entry(e).State = EntityState.Modified;
+            Commit();
         }
         public virtual async Task<TEntity> GetByKeyAsync(TId keyValue, bool skipDeleted = true)
         {
             if (skipDeleted)
-                return await _dbSet.AsNoTracking().SingleOrDefaultAsync(x => x.Id.Equals(keyValue));
+                return await _dbSet.SingleOrDefaultAsync(x => x.Id.Equals(keyValue));
             else
-                return await _dbSet.AsNoTracking().IgnoreQueryFilters().SingleOrDefaultAsync(x => x.Id.Equals(keyValue));
+                return await _dbSet.IgnoreQueryFilters().SingleOrDefaultAsync(x => x.Id.Equals(keyValue));
         }
     }
 }

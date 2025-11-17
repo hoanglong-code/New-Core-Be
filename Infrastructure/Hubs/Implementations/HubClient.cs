@@ -29,8 +29,8 @@ namespace Infrastructure.Hubs.Implementations
         public override async Task OnConnectedAsync()
         {
             string connectionId = Context.ConnectionId;
-            string userName = Context.User?.Identity?.Name ?? "Anonymous";
-            string userId = Context.User?.FindFirst("Id")?.Value;
+            string userName = Context.User?.FindFirst("UserName")?.Value ?? "Anonymous";
+            string userId = Context.User?.FindFirst("UserId")?.Value ?? "0";
 
             if (string.IsNullOrEmpty(userId))
             {

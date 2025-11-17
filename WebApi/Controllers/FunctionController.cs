@@ -21,7 +21,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("GetByPage")]
-        [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.VIEW)]
+        [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.READ)]
         public async Task<IActionResult> GetByPage([FromBody] GetFunctionByPageCommand command)
         {
             return Ok(await _mediator.Send(command));

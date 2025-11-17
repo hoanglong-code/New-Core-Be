@@ -1,9 +1,10 @@
+using Application.EntityDtos.Functions;
 using Domain.Entities.Extend;
 using System;
 using System.Linq.Expressions;
 using static Domain.Enums.ConstantEnums;
 
-namespace Application.EntityDtos
+namespace Application.EntityDtos.Users
 {
 	public class UserDto
 	{

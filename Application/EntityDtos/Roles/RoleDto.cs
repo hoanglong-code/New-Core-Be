@@ -2,7 +2,7 @@ using Domain.Entities.Extend;
 using System;
 using System.Linq.Expressions;
 
-namespace Application.EntityDtos
+namespace Application.EntityDtos.Roles
 {
     public class RoleDto
     {

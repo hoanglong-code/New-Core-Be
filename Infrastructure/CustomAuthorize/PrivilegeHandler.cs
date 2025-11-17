@@ -33,7 +33,7 @@ namespace Infrastructure.CustomAuthorize
                 return Task.CompletedTask;
             }
 
-            var accessKey = userContext.userClaims.access_key;
+            var accessKey = userContext.userClaims.accessKey;
             if (string.IsNullOrEmpty(accessKey))
             {
                 context.Fail();

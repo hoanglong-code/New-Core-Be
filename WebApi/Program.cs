@@ -83,64 +83,13 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(
 #region CustomService
 // CustomService
 builder.Services.AddCustomService();
+builder.Services.AddAuthorizeService(builder.Configuration);
 #endregion
 
 #region Http
 // Http
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
-#endregion
-
-#region Authorize and Swagger
-// Authorize and Swagger
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "CleanArchitectureNET", Version = "v1", Description = "APis are built for CleanArchitectureNET system by Long" });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                          new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                                }
-                            },
-                            new string[] {}
-                    }
-                });
-});
-string domain = builder.Configuration["AppSettings:JwtIssuer"];
-JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-}).AddJwtBearer(cfg =>
-{
-    cfg.RequireHttpsMetadata = false;
-    cfg.SaveToken = true;
-    cfg.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = domain,
-        ValidAudience = domain,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:JwtKey"])),
-        ClockSkew = TimeSpan.Zero // remove delay of token when expire
-    };
-});
 #endregion
 
 #region Cors

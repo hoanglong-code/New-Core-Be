@@ -1,5 +1,5 @@
 ﻿using Application.Contexts.Abstractions;
-using Application.EntityDtos;
+using Application.EntityDtos.Products;
 using Application.IReponsitories.Abstractions;
 using Application.IReponsitories.Base;
 using Domain.Commons;
@@ -26,13 +26,11 @@ namespace Infrastructure.Services.Implementations
     {
         private readonly IProductRepository _entityRepo;
         private readonly IValidator<Product> _validator;
-        public readonly IUnitOfWork _unitOfWork;
         private static readonly ILog log = LogMaster.GetLogger("ProductService", "ProductService");
-        public ProductService(IProductRepository entityRepo, IValidator<Product> validator, IUnitOfWork unitOfWork)
+        public ProductService(IProductRepository entityRepo, IValidator<Product> validator)
         {
             _entityRepo = entityRepo;
             _validator = validator;
-            _unitOfWork = unitOfWork;
         }
         public async Task<BaseSearchResponse<ProductDto>> GetByPage(BaseCriteria request)
         {
@@ -77,6 +75,7 @@ namespace Infrastructure.Services.Implementations
                 if (entity.Id <= 0)
                 {
                     await _entityRepo.AddWithElasticSearchAsync(entity);
+                    return entity;
                 }
                 else
                 {
@@ -86,9 +85,8 @@ namespace Infrastructure.Services.Implementations
                         throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                     }
                     await _entityRepo.UpdateWithElasticSearchAsync(entity);
+                    return curEntity;
                 }
-                await _unitOfWork.CommitChangesAsync();
-                return entity;
             }
             catch (Exception ex)
             {
@@ -106,7 +104,6 @@ namespace Infrastructure.Services.Implementations
                     throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                 }
                 await _entityRepo.RemoveSoftWithElasticSearchAsync(curEntity);
-                await _unitOfWork.CommitChangesAsync();
                 return curEntity;
             }
             catch (Exception ex)
@@ -122,7 +119,6 @@ namespace Infrastructure.Services.Implementations
                 var idList = ids.Split(",").Select(int.Parse).ToList();
                 var entities = await _entityRepo.All().Where(s => idList.Contains(s.Id)).ToListAsync();
                 await _entityRepo.RemoveSoftRangeWithElasticSearchAsync(entities);
-                await _unitOfWork.CommitChangesAsync();
                 return entities;
             }
             catch (Exception ex)

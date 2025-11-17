@@ -11,14 +11,15 @@ namespace Domain.Commons
     {
         public ClaimsPrincipal? User { get; set; }
         public ClaimsIdentity? Identity { get; set; }
-        public string access_key { get; set; } = string.Empty;
-        public long userId { get; set; } = 0;
+        public int userId { get; set; } = 0;
         public string userName { get; set; } = string.Empty;
-        public long userMapId { get; set; } = 0;
         public string fullName { get; set; } = string.Empty;
-        public int roleMax { get; set; } = 9999;
-        public int roleLevel { get; set; } = 9999;
-        public int type { get; set; } = 0;
-        public string Token { get; set; }
+        public string phone { get; set; } = string.Empty;
+        public string email { get; set; } = string.Empty;
+        public string gender { get; set; } = string.Empty;
+        public string address { get; set; } = string.Empty;
+        public string avatar { get; set; } = string.Empty;
+        public string birthday { get; set; } = string.Empty;
+        public string accessKey { get; set; } = string.Empty;
     }
 }

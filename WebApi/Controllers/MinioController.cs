@@ -20,7 +20,7 @@ namespace WebApi.Controllers
             _mediator = mediator;
         }
         [HttpPost("GetBucketByPage")]
-        [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.VIEW)]
+        [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.READ)]
         public async Task<IActionResult> GetByPage([FromBody] GetBucketByPageCommand command)
         {
             return Ok(await _mediator.Send(command));
@@ -41,7 +41,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("GetObjectByPage")]
-        [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.VIEW)]
+        [CustomAuthorize(FunctionCode, ConstantEnums.TypeAction.READ)]
         public async Task<IActionResult> GetObjectByPage([FromBody] GetObjectsByPageCommand command)
         {
             return Ok(await _mediator.Send(command));

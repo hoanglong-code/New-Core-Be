@@ -38,8 +38,6 @@ namespace Infrastructure.Configurations.Extend
 
             builder.Property(e => e.LastLoginAt).IsRequired(false).HasColumnType("datetime");
 
-            builder.Property(e => e.RegEmail).IsRequired(false).HasMaxLength(200);
-
             builder.HasMany(x => x.UserRole).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
         }
     }

@@ -16,7 +16,6 @@ namespace Domain.Entities.Extend
         public string? CardId { get; set; }
         public Gender Gender { get; set; }
         public DateTime? LastLoginAt { get; set; }
-        public string? RegEmail { get; set; }
         public int? CountLoginFail { get; set; }
         public virtual ICollection<UserRole>? UserRole { get; set; }
     }

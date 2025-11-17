@@ -1,4 +1,4 @@
-using Application.EntityDtos;
+using Application.EntityDtos.Functions;
 using AutoMapper;
 using Domain.Entities.Extend;
 using System;

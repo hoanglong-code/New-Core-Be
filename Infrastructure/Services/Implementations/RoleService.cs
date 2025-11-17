@@ -1,4 +1,4 @@
-using Application.EntityDtos;
+using Application.EntityDtos.Roles;
 using Application.IReponsitories.Abstractions;
 using Application.IReponsitories.Base;
 using Domain.Commons;
@@ -8,6 +8,7 @@ using Domain.Exceptions.Extend;
 using FluentValidation;
 using Infrastructure.Commons;
 using Infrastructure.Helpers;
+using Infrastructure.Reponsitories.Implementations;
 using Infrastructure.Services.Abstractions;
 using log4net;
 using Microsoft.EntityFrameworkCore;
@@ -22,14 +23,14 @@ namespace Infrastructure.Services.Implementations
     public class RoleService : IRoleService
     {
         private readonly IRoleRepository _entityRepo;
+        private readonly IFunctionRoleRepository _functionRoleRepository;
         private readonly IValidator<Role> _validator;
-        public readonly IUnitOfWork _unitOfWork;
         private static readonly ILog log = LogMaster.GetLogger("RoleService", "RoleService");
-        public RoleService(IRoleRepository entityRepo, IValidator<Role> validator, IUnitOfWork unitOfWork)
+        public RoleService(IRoleRepository entityRepo, IFunctionRoleRepository functionRoleRepository, IValidator<Role> validator)
         {
             _entityRepo = entityRepo;
+            _functionRoleRepository = functionRoleRepository;
             _validator = validator;
-            _unitOfWork = unitOfWork;
         }
         public async Task<BaseSearchResponse<RoleDto>> GetByPage(BaseCriteria request)
         {
@@ -74,6 +75,12 @@ namespace Infrastructure.Services.Implementations
                 if (entity.Id <= 0)
                 {
                     await _entityRepo.AddAsync(entity);
+                    if (entity.FunctionRole != null && entity.FunctionRole.Any())
+                    {
+                        entity.FunctionRole.ToList().ForEach(x => x.RoleId = entity.Id);
+                        await _functionRoleRepository.AddRangeAsync(entity.FunctionRole);
+                    }
+                    return entity;
                 }
                 else
                 {
@@ -83,9 +90,13 @@ namespace Infrastructure.Services.Implementations
                         throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                     }
                     await _entityRepo.UpdateAsync(entity);
+                    if (entity.FunctionRole != null && entity.FunctionRole.Any())
+                    {
+                        entity.FunctionRole.ToList().ForEach(x => x.RoleId = entity.Id);
+                        await _functionRoleRepository.UpdateRangeAsync(entity.FunctionRole);
+                    }
+                    return curEntity;
                 }
-                await _unitOfWork.CommitChangesAsync();
-                return entity;
             }
             catch (Exception ex)
             {
@@ -103,7 +114,6 @@ namespace Infrastructure.Services.Implementations
                     throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                 }
                 await _entityRepo.RemoveSoftAsync(curEntity);
-                await _unitOfWork.CommitChangesAsync();
                 return curEntity;
             }
             catch (Exception ex)
@@ -119,7 +129,6 @@ namespace Infrastructure.Services.Implementations
                 var idList = ids.Split(",").Select(int.Parse).ToList();
                 var entities = await _entityRepo.All().Where(s => idList.Contains(s.Id)).ToListAsync();
                 await _entityRepo.RemoveSoftRangeAsync(entities);
-                await _unitOfWork.CommitChangesAsync();
                 return entities;
             }
             catch (Exception ex)

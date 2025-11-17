@@ -59,25 +59,22 @@ namespace Infrastructure.Middlewares
             {
                 User = user,
                 Identity = identity,
-                access_key = GetClaimValue(identity, "AccessKey"),
-                fullName = GetClaimValue(identity, "FullName"),
+                userId = ParseIntClaim(identity, "UserId", 0),
                 userName = GetClaimValue(identity, "UserName"),
-                userId = ParseLongClaim(identity, "UserId", 0),
-                userMapId = ParseLongClaim(identity, "UserMapId", 0),
-                roleMax = ParseIntClaim(identity, "RoleMax", 9999),
-                type = ParseIntClaim(identity, "Type", 9999)
+                fullName = GetClaimValue(identity, "FullName"),
+                phone = GetClaimValue(identity, "Phone"),
+                email = GetClaimValue(identity, "Email"),
+                gender = GetClaimValue(identity, "Gender"),
+                address = GetClaimValue(identity, "Address"),
+                avatar = GetClaimValue(identity, "Avatar"),
+                birthday = GetClaimValue(identity, "Birthday"),
+                accessKey = GetClaimValue(identity, "AccessKey"),
             };
         }
 
         private string GetClaimValue(ClaimsIdentity identity, string claimType)
         {
             return identity.Claims.FirstOrDefault(c => c.Type == claimType)?.Value ?? string.Empty;
-        }
-
-        private long ParseLongClaim(ClaimsIdentity identity, string claimType, long defaultValue)
-        {
-            var value = GetClaimValue(identity, claimType);
-            return long.TryParse(value, out var result) ? result : defaultValue;
         }
 
         private int ParseIntClaim(ClaimsIdentity identity, string claimType, int defaultValue)

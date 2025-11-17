@@ -16,15 +16,19 @@ using Infrastructure.Reponsitories.Base;
 using Infrastructure.Reponsitories.Implementations;
 using Infrastructure.Services.Abstractions;
 using Infrastructure.Services.Implementations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Minio.Abstractions;
 using Minio.Implementations;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,6 +64,7 @@ namespace Infrastructure.Extensions
             services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserService, UserService>();
             #endregion
 
             #region Dapper
@@ -107,8 +112,57 @@ namespace Infrastructure.Extensions
             services.AddSingleton<IAuthorizationPolicyProvider, CustomPolicyProvider>();
             #endregion
         }
-        public static void AddDebugCustomService(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAuthorizeService(this IServiceCollection services, IConfiguration configuration)
         {
+            // Authorize and Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CleanArchitectureNET", Version = "v1", Description = "APis are built for CleanArchitectureNET system by Long" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
+                    }
+                });
+            });
+            string domain = configuration["AppSettings:JwtIssuer"];
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = domain,
+                    ValidAudience = domain,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["AppSettings:JwtKey"])),
+                    ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                };
+            });
         }
 
         public static void UseCustomService(this IApplicationBuilder app)

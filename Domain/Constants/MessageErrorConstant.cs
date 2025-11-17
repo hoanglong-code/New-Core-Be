@@ -30,8 +30,6 @@ namespace Domain.Constants
         public static string ERROR_400_MESSAGE = "Có lỗi xảy ra. Xin vui lòng thử lại sau!";
         public static string ERROR_500_MESSAGE = "Hệ thống xảy ra lỗi. Xin vui lòng thử lại sau!";
         public const string INVALID = "Không hợp lệ!";
-        public const string INVALID_USERID = "Không xác định được UserId";
-        public const string INVALID_LOGIN = "Tài khoản này đã đăng nhập ở thiết bị khác!";
         #endregion
 
         #region role
@@ -45,6 +43,10 @@ namespace Domain.Constants
 
         #region user
         public const string USER_NOT_FOUND = "Người dùng không tồn tại!";
+        public const string USER_LOCK = "Người dùng đã bị khóa!";
+        public const string USER_TEMP = "Người dùng chưa được kích hoạt";
+        public const string INVALID_USERID = "Không xác định được UserId";
+        public const string INVALID_LOGIN = "Tài khoản này đã đăng nhập ở thiết bị khác!";
         #endregion
     }
 }

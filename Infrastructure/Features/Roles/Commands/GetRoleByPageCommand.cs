@@ -1,4 +1,4 @@
-using Application.EntityDtos;
+using Application.EntityDtos.Roles;
 using Infrastructure.Commons;
 using MediatR;
 using System;

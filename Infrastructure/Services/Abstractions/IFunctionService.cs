@@ -1,4 +1,4 @@
-using Application.EntityDtos;
+using Application.EntityDtos.Functions;
 using Domain.Commons;
 using Domain.Entities.Extend;
 using Infrastructure.Commons;

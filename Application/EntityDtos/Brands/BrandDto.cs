@@ -2,7 +2,7 @@
 using System;
 using System.Linq.Expressions;
 
-namespace Application.EntityDtos
+namespace Application.EntityDtos.Brands
 {
     public class BrandDto
     {
