@@ -23,6 +23,7 @@ namespace Application.EntityDtos.Users
         public DateTime? Birthday { get; set; }
         public string? Avatar { get; set; }
         public EntityStatus Status { get; set; }
+        public required string RegAccount { get; set; }
         public List<string>? Functions { get; set; }
 
         public static Expression<Func<User, UserLoginDto>> Expression => p => new UserLoginDto
@@ -38,6 +39,7 @@ namespace Application.EntityDtos.Users
             Birthday = p.Birthday,
             Avatar = p.Avatar,
             Status = p.Status,
+            RegAccount = p.RegAccount,
             Functions = p.UserRole!
                     .Where(ur => ur.Role != null && ur.Role.Status != EntityStatus.DELETED)
                     .SelectMany(ur => ur.Role!.FunctionRole!)

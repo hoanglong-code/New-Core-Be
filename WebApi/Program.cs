@@ -156,7 +156,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHsts();
-app.UseMiddleware<UserContextMiddleware>();
 app.UseCors("NON.EXE");
 
 app.UseHttpsRedirection();
@@ -164,9 +163,10 @@ app.UseStaticFiles();
 app.UseCookiePolicy();
 app.UseRouting();
 
-
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<UserContextMiddleware>();
 
 app.MapControllers();
 

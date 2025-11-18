@@ -1,5 +1,6 @@
 ﻿using Application.Data;
 using Application.EntityDtos.Users;
+using Application.IReponsitories.Abstractions;
 using Domain.Constants;
 using Domain.Entities.Extend;
 using Domain.Exceptions.Extend;
@@ -18,16 +19,16 @@ namespace Infrastructure.Services.Implementations
 {
     public class LoginService : ILoginService
     {
-        private readonly AppDbContext _dbContext; // Inject AppDbContext
+        private readonly IUserRepository _entityRepo; // Inject AppDbContext
         private IConfiguration _configuration;
         private readonly string _secretKey;
         private readonly string _jwtKey;
         private readonly string _jwtExpireDays;
         private readonly string _jwtIssuer;
 
-        public LoginService(AppDbContext dbContext, IConfiguration configuration)
+        public LoginService(IUserRepository entityRepo, IConfiguration configuration)
         {
-            _dbContext = dbContext;
+            _entityRepo = entityRepo;
             _configuration = configuration;
             _secretKey = _configuration["Encryption:SecretKey"] ?? throw new ArgumentNullException("Encryption:SecretKey", "Missing secret key in configuration");
             _jwtKey = _configuration["AppSettings:JwtKey"] ?? throw new ArgumentNullException("AppSettings:JwtKey", "Missing jwt key in configuration");
@@ -39,7 +40,7 @@ namespace Infrastructure.Services.Implementations
             try
             {
                 // Sử dụng DbContext để truy vấn dữ liệu
-                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+                var user = await _entityRepo.All().FirstOrDefaultAsync(x => x.UserName == userName);
                 return user;
             }
             catch (Exception ex)
@@ -52,18 +53,14 @@ namespace Infrastructure.Services.Implementations
         {
             var username = PasswordHasher.AesDecryption(request.UserName, _secretKey);
             var password = PasswordHasher.AesDecryption(request.Password, _secretKey);
-
-            var user = await _dbContext.Users
-                .Where(x => x.UserName == username && x.Status != Domain.Enums.ConstantEnums.EntityStatus.DELETED)
-                .Select(UserLoginDto.Expression)
-                .FirstOrDefaultAsync();
+            var user = await _entityRepo.All().Where(x => x.UserName == username).Select(UserLoginDto.Expression).FirstOrDefaultAsync();
 
             if (user == null)
             {
                 throw new NotFoundException(MessageErrorConstant.USER_NOT_FOUND);
             }
 
-            if (!string.Equals(user.Password, password, StringComparison.Ordinal))
+            if (PasswordHasher.VerifyPassword(password + user.RegAccount, user.Password))
             {
                 throw new NotFoundException(MessageErrorConstant.USER_NOT_FOUND);
             }

@@ -22,7 +22,7 @@ namespace Infrastructure.Configurations.Extend
 
             builder.HasIndex(x => x.Code).IsUnique();
 
-            builder.Property(x => x.FunctionParentId).IsRequired(false);
+            builder.Property(x => x.FunctionParentId).IsRequired(true);
 
             builder.Property(x => x.Url).IsRequired(false).HasMaxLength(500);
 

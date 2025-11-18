@@ -28,6 +28,8 @@ namespace Infrastructure.Configurations.Extend
 
             builder.Property(e => e.Phone).IsRequired(false).HasMaxLength(50).IsUnicode(false);
 
+            builder.Property(e => e.RegAccount).IsRequired(true).HasMaxLength(100).IsUnicode(false);
+
             builder.Property(e => e.CardId).IsRequired(false).HasMaxLength(20);
 
             builder.Property(e => e.Address).IsRequired(false).HasMaxLength(500);
@@ -37,6 +39,8 @@ namespace Infrastructure.Configurations.Extend
             builder.Property(e => e.Birthday).IsRequired(false).HasColumnType("datetime");
 
             builder.Property(e => e.LastLoginAt).IsRequired(false).HasColumnType("datetime");
+
+            builder.Property(e => e.TypeRole).IsRequired(true);
 
             builder.HasMany(x => x.UserRole).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
         }

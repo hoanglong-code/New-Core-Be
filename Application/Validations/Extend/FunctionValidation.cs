@@ -32,9 +32,8 @@ namespace Application.Validations.Extend
                 .WithMessage("Mã chức năng không được dài quá 50 ký tự");
 
             RuleFor(x => x.FunctionParentId)
-                .GreaterThan(0)
-                .WithMessage("Chức năng cha không hợp lệ!")
-                .When(x => x.FunctionParentId.HasValue);
+                .LessThan(0)
+                .WithMessage("Chức năng cha không hợp lệ!");
 
             RuleFor(x => x.Url)
                 .MaximumLength(500)

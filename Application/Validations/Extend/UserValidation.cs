@@ -76,6 +76,20 @@ namespace Application.Validations.Extend
                 .MaximumLength(500)
                 .WithMessage("Đường dẫn avatar không được dài quá 500 ký tự")
                 .When(x => !string.IsNullOrEmpty(x.Avatar));
+
+            RuleFor(x => x.TypeRole)
+                .Cascade(CascadeMode.Continue)
+                .NotNull()
+                .WithMessage("Vui lòng chọn loại tài khoản!");
+
+            RuleFor(x => x.RegAccount)
+                .Cascade(CascadeMode.Continue)
+                .NotNull()
+                .WithMessage("Chuỗi RegAccount (salt) không được bỏ trống!")
+                .NotEmpty()
+                .WithMessage("Chuỗi RegAccount (salt) không được bỏ trống!")
+                .MaximumLength(100)
+                .WithMessage("Chuỗi RegAccount (salt) không được dài quá 100 ký tự");
         }
     }
 }

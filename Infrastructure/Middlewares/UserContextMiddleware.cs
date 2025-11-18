@@ -2,6 +2,7 @@
 using Domain.Commons;
 using Domain.Constants;
 using Infrastructure.Services.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -24,6 +25,14 @@ namespace Infrastructure.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
+            var endpoint = context.GetEndpoint();
+            var allowAnonymous = endpoint?.Metadata.GetMetadata<IAllowAnonymous>() != null;
+            if (allowAnonymous)
+            {
+                await _next(context);
+                return;
+            }
+
             if (!context.User.Identity?.IsAuthenticated ?? true)
             {
                 await HandleUnauthorized(context);
@@ -44,7 +53,7 @@ namespace Infrastructure.Middlewares
                 return;
             }
 
-            var isAuthorized = await HandleCheckRoleUser(context, userClaims);
+            var isAuthorized = await HandleCheckUser(context, userClaims);
             if (!isAuthorized)
             {
                 return;
@@ -89,7 +98,7 @@ namespace Infrastructure.Middlewares
             await context.Response.WriteAsync(MessageErrorConstant.AUTHORIZED);
         }
 
-        private async Task<bool> HandleCheckRoleUser(HttpContext context, UserClaims userClaims)
+        private async Task<bool> HandleCheckUser(HttpContext context, UserClaims userClaims)
         {
             _logger.LogInformation("Processing user: {FullName}", userClaims.fullName);
 

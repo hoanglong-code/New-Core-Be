@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Features.Users.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace WebApi.Controllers
             _mediator = mediator;
         }
         [HttpPost("Auth")]
+        [AllowAnonymous]
         public async Task<IActionResult> Auth(LoginCommand command)
         {
             return Ok(await _mediator.Send(command));

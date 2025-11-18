@@ -19,8 +19,9 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("GetMenu")]
-        public async Task<IActionResult> GetMenu(GetMenuCommand command)
+        public async Task<IActionResult> GetMenu()
         {
+            GetMenuCommand command = new GetMenuCommand();
             return Ok(await _mediator.Send(command));
         }
     }
