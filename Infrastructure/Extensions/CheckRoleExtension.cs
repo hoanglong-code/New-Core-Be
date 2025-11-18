@@ -41,34 +41,5 @@ namespace Infrastructure.Extensions
             }
             return str;
         }
-        public static List<Menu> CreateMenu(List<Menu> list, int k)
-        {
-            var listMenu = list.Where(e => e.FunctionParentId == k).ToList();
-            if (listMenu.Count > 0)
-            {
-                List<Menu> menus = new List<Menu>();
-                foreach (var item in listMenu)
-                {
-                    char[] str = item.ActiveKey.ToCharArray();
-                    if (int.Parse(str[0].ToString()) == 1)
-                    {
-                        Menu menu = new Menu() 
-                        {
-                            Id = item.Id,
-                            Name = item.Name,
-                            FunctionParentId = item.FunctionParentId,
-                            Url = item.Url,
-                            Location = item.Location,
-                            Icon = item.Icon,
-                            ActiveKey = item.ActiveKey,
-                            Childrens = CreateMenu(list, item.Id),
-                        };
-                        menus.Add(menu);
-                    }
-                }
-                return menus;
-            }
-            return new List<Menu>();
-        }
     }
 }

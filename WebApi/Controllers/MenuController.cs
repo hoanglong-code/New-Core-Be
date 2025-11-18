@@ -18,10 +18,10 @@ namespace WebApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("GetMenu")]
-        public async Task<IActionResult> GetMenu()
+        [HttpPost("GetMenu")]
+        public async Task<IActionResult> GetMenu(GetMenuCommand command)
         {
-            return Ok(await _mediator.Send(new GetMenuCommand()));
+            return Ok(await _mediator.Send(command));
         }
     }
 }

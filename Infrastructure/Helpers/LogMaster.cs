@@ -25,7 +25,6 @@ namespace Infrastructure.Helpers
         }
         #endregion
 
-
         #region Public Methods
         public static ILog GetLogger(string arg, string name)
         {
@@ -65,7 +64,6 @@ namespace Infrastructure.Helpers
             return LogManager.GetLogger(repositoryName, name);
         }
         #endregion
-
 
         #region Private Methods
         private static IAppender GetRollingAppender(string arg)

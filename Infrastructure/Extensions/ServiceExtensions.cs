@@ -165,7 +165,6 @@ namespace Infrastructure.Extensions
                 };
             });
         }
-
         public static void UseCustomService(this IApplicationBuilder app)
         {
         }
