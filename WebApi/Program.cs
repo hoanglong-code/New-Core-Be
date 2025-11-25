@@ -24,7 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // DbContext
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions => sqlOptions.MigrationsAssembly("Infrastructure")));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions => sqlOptions.MigrationsAssembly("Infrastructure")));
 
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews(options =>
