@@ -60,7 +60,7 @@ namespace Infrastructure.Services.Implementations
                 throw new NotFoundException(MessageErrorConstant.USER_NOT_FOUND);
             }
 
-            if (PasswordHasher.VerifyPassword(password + user.RegAccount, user.Password))
+            if (!PasswordHasher.VerifyPassword(password + user.RegAccount, user.Password))
             {
                 throw new NotFoundException(MessageErrorConstant.USER_NOT_FOUND);
             }
