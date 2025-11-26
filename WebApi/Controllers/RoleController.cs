@@ -12,7 +12,7 @@ namespace WebApi.Controllers
     [Authorize]
     public class RoleController : ControllerBase
     {
-        private const string FunctionCode = "QLVT";
+        private const string FunctionCode = "QLNQ";
         private readonly IMediator _mediator;
 
         public RoleController(IMediator mediator)

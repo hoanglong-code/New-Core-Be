@@ -109,7 +109,7 @@ namespace Infrastructure.Extensions
 
             #region Other
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IAuthorizationHandler, PrivilegeHandler>();
+            services.AddScoped<IAuthorizationHandler, PrivilegeHandler>();
             services.AddSingleton<IAuthorizationPolicyProvider, CustomPolicyProvider>();
             #endregion
         }

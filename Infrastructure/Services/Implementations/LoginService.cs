@@ -90,7 +90,7 @@ namespace Infrastructure.Services.Implementations
                 new Claim("Address", user.Address ?? ""),
                 new Claim("Avatar", user.Avatar ?? ""),
                 new Claim("Birthday", user.Birthday != null ? user.Birthday.Value.ToString("dd-MM-yyyy") : ""),
-                new Claim("AccessKey", string.Join("", user.Functions ?? new List<string>()))
+                new Claim("AccessKey", string.Join("-", user.Functions ?? new List<string>()))
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));

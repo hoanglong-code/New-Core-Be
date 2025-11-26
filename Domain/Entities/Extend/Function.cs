@@ -11,7 +11,7 @@ namespace Domain.Entities.Extend
     {
         public required string Name { get; set; }
         public required string Code { get; set; }
-        public int FunctionParentId { get; set; }
+        public int? FunctionParentId { get; set; }
         public string? Url { get; set; }
         public string? Note { get; set; }
         public int? Location { get; set; }

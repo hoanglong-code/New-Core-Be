@@ -43,7 +43,7 @@ namespace Infrastructure.Commons
             if (!string.IsNullOrEmpty(baseCriteria.QueryString)) queryData = queryData.Where(baseCriteria.QueryString);
 
             var totalCount = queryData.DeferredCount().FutureValue();
-            var query = queryData.OrderBy(sort).Skip(baseCriteria.PageIndex * baseCriteria.PageSize).Take(baseCriteria.PageSize).Future();
+            var query = queryData.OrderBy(sort).Skip((baseCriteria.PageIndex -1) * baseCriteria.PageSize).Take(baseCriteria.PageSize).Future();
 
             var result = await query.ToListAsync();
 
@@ -68,7 +68,7 @@ namespace Infrastructure.Commons
 
             var searchRequest = new SearchRequest(typeof(TModel).Name.ToLower())
             {
-                From = baseCriteria.PageIndex * baseCriteria.PageSize,
+                From = (baseCriteria.PageIndex - 1) * baseCriteria.PageSize,
                 Size = baseCriteria.PageSize,
                 Query = ElasticSearch.ConvertToElasticQuery(baseCriteria.QueryString),
                 Sort = ElasticSearch.ParseSort(sort)

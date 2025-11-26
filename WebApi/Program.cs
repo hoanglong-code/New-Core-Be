@@ -157,9 +157,8 @@ app.UseCookiePolicy();
 app.UseRouting();
 
 app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseMiddleware<UserContextMiddleware>();
+app.UseAuthorization();
 
 app.MapControllers();
 

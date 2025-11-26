@@ -14,6 +14,11 @@ namespace Infrastructure.CustomAuthorize
 {
     public class PrivilegeHandler : AuthorizationHandler<PrivilegeRequirement>
     {
+        private readonly IUserContext _userContext;
+        public PrivilegeHandler(IUserContext userContext)
+        {
+            _userContext = userContext;
+        }
         protected override Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         PrivilegeRequirement requirement)
@@ -25,15 +30,7 @@ namespace Infrastructure.CustomAuthorize
                 return Task.CompletedTask;
             }
 
-            var userContext = httpContext.RequestServices.GetService(typeof(IUserContext)) as IUserContext;
-
-            if (userContext == null || userContext.userClaims == null)
-            {
-                context.Fail();
-                return Task.CompletedTask;
-            }
-
-            var accessKey = userContext.userClaims.accessKey;
+            var accessKey = _userContext.userClaims.accessKey;
             if (string.IsNullOrEmpty(accessKey))
             {
                 context.Fail();

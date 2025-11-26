@@ -24,7 +24,7 @@ namespace Infrastructure.CustomAuthorize
         {
             _functionCode = functionCode;
             _type = type;
-            Policy = $"permission={_functionCode}:{_type}";
+            Policy = $"permission={_functionCode}:{(int)_type}";
         }
     }
 }
