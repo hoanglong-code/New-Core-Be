@@ -5,26 +5,19 @@ using Infrastructure.Extensions;
 using Infrastructure.Filters;
 using Infrastructure.Hubs.Implementations;
 using Infrastructure.Middlewares;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Minio;
 using StackExchange.Redis;
-using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 // DbContext
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions => sqlOptions.MigrationsAssembly("Infrastructure")));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions => sqlOptions.MigrationsAssembly("Infrastructure")));
 
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews(options =>
