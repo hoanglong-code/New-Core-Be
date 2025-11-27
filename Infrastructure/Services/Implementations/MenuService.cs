@@ -23,9 +23,9 @@ namespace Infrastructure.Services.Implementations
             {
                 return new List<Menu>();
             }
-            return CreateMenu(menus.Menus, 0);
+            return CreateMenu(menus.Menus, null);
         }
-        public static List<Menu> CreateMenu(List<Menu> list, int k)
+        public static List<Menu> CreateMenu(List<Menu> list, int? k)
         {
             var listMenu = list.Where(e => e.FunctionParentId == k).ToList();
             if (listMenu.Count > 0)
