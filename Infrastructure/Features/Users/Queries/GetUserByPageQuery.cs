@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Infrastructure.Features.Users.Queries
 {
-    public class GetUserByPageQuery : IRequestHandler<GetUserByPageCommand, BaseSearchResponse<UserDto>>
+    public class GetUserByPageQuery : IRequestHandler<GetUserByPageCommand, BaseSearchResponse<UserGridDto>>
     {
         private readonly IUserService _service;
         private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ namespace Infrastructure.Features.Users.Queries
             _service = service;
             _mapper = mapper;
         }
-        public async Task<BaseSearchResponse<UserDto>> Handle(GetUserByPageCommand request, CancellationToken cancellationToken)
+        public async Task<BaseSearchResponse<UserGridDto>> Handle(GetUserByPageCommand request, CancellationToken cancellationToken)
         {
             BaseCriteria baseCriteria = _mapper.Map<BaseCriteria>(request);
             return await _service.GetByPage(baseCriteria);

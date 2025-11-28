@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.EntityDtos.Functions
 {
-	public class FunctionDto
+	public class FunctionGridDto
 	{
 		public int Id { get; set; }
 		public string? Name { get; set; }
@@ -17,7 +17,7 @@ namespace Application.EntityDtos.Functions
 		public int? Location { get; set; }
 		public string? FunctionParentName { get; set; }
 
-        public static Expression<Func<Function, FunctionDto>> Expression => p => new FunctionDto
+        public static Expression<Func<Function, FunctionGridDto>> Expression => p => new FunctionGridDto
         {
             Id = p.Id,
             Name = p.Name,

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Infrastructure.Features.Users.Commands
 {
-    public class GetUserByPageCommand : IRequest<BaseSearchResponse<UserDto>>
+    public class GetUserByPageCommand : IRequest<BaseSearchResponse<UserGridDto>>
     {
         public int PageIndex { get; set; } = 0;
         public int PageSize { get; set; } = 20;

@@ -12,8 +12,8 @@ namespace Infrastructure.Services.Abstractions
 {
     public interface IFunctionService
     {
-        public Task<BaseSearchResponse<FunctionDto>> GetByPage(BaseCriteria request);
-        public Task<Function> GetById(int id);
+        public Task<BaseSearchResponse<FunctionGridDto>> GetByPage(BaseCriteria request);
+        public Task<FunctionDetailDto> GetById(int id);
         public Task<Function> SaveData(Function entity);
         public Task<Function> DeleteData(int id);
         public Task<List<Function>> DeleteMultipleData(string ids);

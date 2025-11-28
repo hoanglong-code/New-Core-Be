@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Application.EntityDtos.Products
 {
-    public class ProductDto
+    public class ProductGridDto
     {
         public int Id { get; set; }
         public string? Name { get; set; }
@@ -12,7 +12,7 @@ namespace Application.EntityDtos.Products
         public decimal Price { get; set; }
         public string? BrandName { get; set; }
 
-        public static Expression<Func<Product, ProductDto>> Expression => p => new ProductDto
+        public static Expression<Func<Product, ProductGridDto>> Expression => p => new ProductGridDto
         {
             Id = p.Id,
             Name = p.Name,

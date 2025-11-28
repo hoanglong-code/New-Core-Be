@@ -32,12 +32,12 @@ namespace Infrastructure.Services.Implementations
             _entityRepo = entityRepo;
             _validator = validator;
         }
-        public async Task<BaseSearchResponse<ProductDto>> GetByPage(BaseCriteria request)
+        public async Task<BaseSearchResponse<ProductGridDto>> GetByPage(BaseCriteria request)
         {
             try
             {
-                IQueryable<ProductDto> query = _entityRepo.All().Select(ProductDto.Expression);
-                return await BaseSearchResponse<ProductDto>.GetResponseWithElasticSearch(query, request);
+                IQueryable<ProductGridDto> query = _entityRepo.All().Select(ProductGridDto.Expression);
+                return await BaseSearchResponse<ProductGridDto>.GetResponseWithElasticSearch(query, request);
             }
             catch (Exception ex)
             {
@@ -45,16 +45,19 @@ namespace Infrastructure.Services.Implementations
                 throw;
             }
         }
-        public async Task<Product> GetById(int id)
+        public async Task<ProductDetailDto> GetById(int id)
         {
             try
             {
-                var entity = await _entityRepo.GetByKeyAsync(id);
-                if (entity == null)
+                var dto = await _entityRepo.All()
+                    .Where(x => x.Id == id)
+                    .Select(ProductDetailDto.Expression)
+                    .FirstOrDefaultAsync();
+                if (dto == null)
                 {
                     throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                 }
-                return entity;
+                return dto;
             }
             catch (Exception ex)
             {

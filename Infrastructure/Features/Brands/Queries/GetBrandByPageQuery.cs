@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Infrastructure.Features.Brands.Queries
 {
-    public class GetBrandByPageQuery : IRequestHandler<GetBrandByPageCommand, BaseSearchResponse<BrandDto>>
+    public class GetBrandByPageQuery : IRequestHandler<GetBrandByPageCommand, BaseSearchResponse<BrandGridDto>>
     {
         private readonly IBrandService _service;
         private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ namespace Infrastructure.Features.Brands.Queries
             _service = service;
             _mapper = mapper;
         }
-        public async Task<BaseSearchResponse<BrandDto>> Handle(GetBrandByPageCommand request, CancellationToken cancellationToken)
+        public async Task<BaseSearchResponse<BrandGridDto>> Handle(GetBrandByPageCommand request, CancellationToken cancellationToken)
         {
             BaseCriteria baseCriteria = _mapper.Map<BaseCriteria>(request);
             return await _service.GetByPage(baseCriteria);

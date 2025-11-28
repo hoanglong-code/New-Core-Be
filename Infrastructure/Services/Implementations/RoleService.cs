@@ -32,12 +32,12 @@ namespace Infrastructure.Services.Implementations
             _functionRoleRepo = functionRoleRepo;
             _validator = validator;
         }
-        public async Task<BaseSearchResponse<RoleDto>> GetByPage(BaseCriteria request)
+        public async Task<BaseSearchResponse<RoleGridDto>> GetByPage(BaseCriteria request)
         {
             try
             {
-                IQueryable<RoleDto> query = _entityRepo.All().Select(RoleDto.Expression);
-                return await BaseSearchResponse<RoleDto>.GetResponse(query, request);
+                IQueryable<RoleGridDto> query = _entityRepo.All().Select(RoleGridDto.Expression);
+                return await BaseSearchResponse<RoleGridDto>.GetResponse(query, request);
             }
             catch (Exception ex)
             {
@@ -45,16 +45,19 @@ namespace Infrastructure.Services.Implementations
                 throw;
             }
         }
-        public async Task<Role> GetById(int id)
+        public async Task<RoleDetailDto> GetById(int id)
         {
             try
             {
-                var entity = await _entityRepo.GetByKeyAsync(id);
-                if (entity == null)
+                var dto = await _entityRepo.All()
+                    .Where(x => x.Id == id)
+                    .Select(RoleDetailDto.Expression)
+                    .FirstOrDefaultAsync();
+                if (dto == null)
                 {
                     throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                 }
-                return entity;
+                return dto;
             }
             catch (Exception ex)
             {

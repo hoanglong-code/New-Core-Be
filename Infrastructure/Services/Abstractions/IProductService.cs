@@ -12,8 +12,8 @@ namespace Infrastructure.Services.Abstractions
 {
     public interface IProductService
     {
-        public Task<BaseSearchResponse<ProductDto>> GetByPage(BaseCriteria request);
-        public Task<Product> GetById(int id);
+        public Task<BaseSearchResponse<ProductGridDto>> GetByPage(BaseCriteria request);
+        public Task<ProductDetailDto> GetById(int id);
         public Task<Product> SaveData(Product entity);
         public Task<Product> DeleteData(int id);
         public Task<List<Product>> DeleteMultipleData(string ids);

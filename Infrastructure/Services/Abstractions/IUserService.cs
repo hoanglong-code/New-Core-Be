@@ -12,8 +12,8 @@ namespace Infrastructure.Services.Abstractions
 {
     public interface IUserService
     {
-        public Task<BaseSearchResponse<UserDto>> GetByPage(BaseCriteria request);
-        public Task<User> GetById(int id);
+        public Task<BaseSearchResponse<UserGridDto>> GetByPage(BaseCriteria request);
+        public Task<UserDetailDto> GetById(int id);
         public Task<User> SaveData(User entity);
         public Task<User> DeleteData(int id);
         public Task<List<User>> DeleteMultipleData(string ids);

@@ -12,8 +12,8 @@ namespace Infrastructure.Services.Abstractions
 {
     public interface IRoleService
     {
-        public Task<BaseSearchResponse<RoleDto>> GetByPage(BaseCriteria request);
-        public Task<Role> GetById(int id);
+        public Task<BaseSearchResponse<RoleGridDto>> GetByPage(BaseCriteria request);
+        public Task<RoleDetailDto> GetById(int id);
         public Task<Role> SaveData(Role entity);
         public Task<Role> DeleteData(int id);
         public Task<List<Role>> DeleteMultipleData(string ids);

@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Infrastructure.Features.Products.Queries
 {
-    public class GetProductByPageQuery : IRequestHandler<GetProductByPageCommand, BaseSearchResponse<ProductDto>>
+    public class GetProductByPageQuery : IRequestHandler<GetProductByPageCommand, BaseSearchResponse<ProductGridDto>>
     {
         private readonly IProductService _service;
         private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ namespace Infrastructure.Features.Products.Queries
             _service = service;
             _mapper = mapper;
         }
-        public async Task<BaseSearchResponse<ProductDto>> Handle(GetProductByPageCommand request, CancellationToken cancellationToken)
+        public async Task<BaseSearchResponse<ProductGridDto>> Handle(GetProductByPageCommand request, CancellationToken cancellationToken)
         {
             BaseCriteria baseCriteria = _mapper.Map<BaseCriteria>(request);
             return await _service.GetByPage(baseCriteria);

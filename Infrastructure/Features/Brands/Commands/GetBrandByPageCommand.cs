@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Features.Brands.Commands
 {
-    public class GetBrandByPageCommand : IRequest<BaseSearchResponse<BrandDto>>
+    public class GetBrandByPageCommand : IRequest<BaseSearchResponse<BrandGridDto>>
     {
         public int PageIndex { get; set; } = 0;
         public int PageSize { get; set; } = 20;

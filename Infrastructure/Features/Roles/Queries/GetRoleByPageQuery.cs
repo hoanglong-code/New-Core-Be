@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Infrastructure.Features.Roles.Queries
 {
-    public class GetRoleByPageQuery : IRequestHandler<GetRoleByPageCommand, BaseSearchResponse<RoleDto>>
+    public class GetRoleByPageQuery : IRequestHandler<GetRoleByPageCommand, BaseSearchResponse<RoleGridDto>>
     {
         private readonly IRoleService _service;
         private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ namespace Infrastructure.Features.Roles.Queries
             _service = service;
             _mapper = mapper;
         }
-        public async Task<BaseSearchResponse<RoleDto>> Handle(GetRoleByPageCommand request, CancellationToken cancellationToken)
+        public async Task<BaseSearchResponse<RoleGridDto>> Handle(GetRoleByPageCommand request, CancellationToken cancellationToken)
         {
             BaseCriteria baseCriteria = _mapper.Map<BaseCriteria>(request);
             return await _service.GetByPage(baseCriteria);

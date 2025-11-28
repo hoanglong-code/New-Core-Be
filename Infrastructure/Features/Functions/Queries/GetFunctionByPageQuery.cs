@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Infrastructure.Features.Functions.Queries
 {
-    public class GetFunctionByPageQuery : IRequestHandler<GetFunctionByPageCommand, BaseSearchResponse<FunctionDto>>
+    public class GetFunctionByPageQuery : IRequestHandler<GetFunctionByPageCommand, BaseSearchResponse<FunctionGridDto>>
     {
         private readonly IFunctionService _service;
         private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ namespace Infrastructure.Features.Functions.Queries
             _service = service;
             _mapper = mapper;
         }
-        public async Task<BaseSearchResponse<FunctionDto>> Handle(GetFunctionByPageCommand request, CancellationToken cancellationToken)
+        public async Task<BaseSearchResponse<FunctionGridDto>> Handle(GetFunctionByPageCommand request, CancellationToken cancellationToken)
         {
             BaseCriteria baseCriteria = _mapper.Map<BaseCriteria>(request);
             return await _service.GetByPage(baseCriteria);

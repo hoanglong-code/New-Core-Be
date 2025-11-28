@@ -9,12 +9,20 @@ using System.Threading.Tasks;
 
 namespace Application.Profiles
 {
-    public class ProductProfile : Profile
+    public class ProductDtoToEntity : Profile
     {
-       public ProductProfile()
-       {
-            CreateMap<Product, ProductDto>();
-            CreateMap<ProductDto, Product>();
+        public ProductDtoToEntity()
+        {
+            CreateMap<ProductGridDto, Product>();
+            CreateMap<ProductSaveDto, Product>();
+        }
+    }
+    public class ProductEntityToDto : Profile
+    {
+        public ProductEntityToDto()
+        {
+            CreateMap<Product, ProductGridDto>();
+            CreateMap<Product, ProductDetailDto>();
         }
     }
 }

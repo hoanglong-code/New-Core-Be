@@ -9,12 +9,20 @@ using System.Threading.Tasks;
 
 namespace Application.Profiles
 {
-    public class RoleProfile : Profile
+    public class RoleDtoToEntity : Profile
     {
-        public RoleProfile()
+        public RoleDtoToEntity()
         {
-            CreateMap<Role, RoleDto>();
-            CreateMap<RoleDto, Role>();
+            CreateMap<RoleGridDto, Role>();
+            CreateMap<RoleSaveDto, Role>();
+        }
+    }
+    public class RoleEntityToDto : Profile
+    {
+        public RoleEntityToDto()
+        {
+            CreateMap<Role, RoleGridDto>();
+            CreateMap<Role, RoleDetailDto>();
         }
     }
 }

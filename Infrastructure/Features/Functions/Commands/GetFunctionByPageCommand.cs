@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Features.Functions.Commands
 {
-    public class GetFunctionByPageCommand : IRequest<BaseSearchResponse<FunctionDto>>
+    public class GetFunctionByPageCommand : IRequest<BaseSearchResponse<FunctionGridDto>>
     {
         public int PageIndex { get; set; } = 0;
         public int PageSize { get; set; } = 20;

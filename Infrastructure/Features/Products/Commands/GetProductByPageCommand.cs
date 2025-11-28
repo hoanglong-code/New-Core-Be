@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Features.Products.Commands
 {
-    public class GetProductByPageCommand : IRequest<BaseSearchResponse<ProductDto>>
+    public class GetProductByPageCommand : IRequest<BaseSearchResponse<ProductGridDto>>
     {
         public int PageIndex { get; set; } = 0;
         public int PageSize { get; set; } = 20;

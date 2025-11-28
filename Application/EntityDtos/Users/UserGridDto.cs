@@ -6,7 +6,7 @@ using static Domain.Enums.ConstantEnums;
 
 namespace Application.EntityDtos.Users
 {
-	public class UserDto
+	public class UserGridDto
 	{
 		public int Id { get; set; }
 		public required string FullName { get; set; }
@@ -16,7 +16,7 @@ namespace Application.EntityDtos.Users
 		public string? Address { get; set; }
 		public DateTime? Birthday { get; set; }
 
-		public static Expression<Func<User, UserDto>> Expression => p => new UserDto
+		public static Expression<Func<User, UserGridDto>> Expression => p => new UserGridDto
 		{
 			Id = p.Id,
 			FullName = p.FullName,

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Domain.Entities.Extend;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using static Domain.Enums.ConstantEnums;
@@ -20,5 +22,20 @@ namespace Application.EntityDtos.Users
         public string? CardId { get; set; }
         public Gender Gender { get; set; }
         public TypeRole TypeRole { get; set; }
+
+        public static Expression<Func<User, UserDetailDto>> Expression => p => new UserDetailDto
+        {
+            Id = p.Id,
+            UserName = p.UserName,
+            FullName = p.FullName,
+            Email = p.Email,
+            Birthday = p.Birthday,
+            Avatar = p.Avatar,
+            Address = p.Address,
+            Phone = p.Phone,
+            CardId = p.CardId,
+            Gender = p.Gender,
+            TypeRole = p.TypeRole,
+        };
     }
 }

@@ -12,8 +12,8 @@ namespace Infrastructure.Services.Abstractions
 {
     public interface IBrandService
     {
-        public Task<BaseSearchResponse<BrandDto>> GetByPage(BaseCriteria request);
-        public Task<Brand> GetById(int id);
+        public Task<BaseSearchResponse<BrandGridDto>> GetByPage(BaseCriteria request);
+        public Task<BrandDetailDto> GetById(int id);
         public Task<Brand> SaveData(Brand entity);
         public Task<Brand> DeleteData(int id);
         public Task<List<Brand>> DeleteMultipleData(string ids);

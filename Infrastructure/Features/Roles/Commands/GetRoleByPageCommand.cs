@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Features.Roles.Commands
 {
-    public class GetRoleByPageCommand : IRequest<BaseSearchResponse<RoleDto>>
+    public class GetRoleByPageCommand : IRequest<BaseSearchResponse<RoleGridDto>>
     {
         public int PageIndex { get; set; } = 0;
         public int PageSize { get; set; } = 20;

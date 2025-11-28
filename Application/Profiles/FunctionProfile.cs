@@ -9,12 +9,20 @@ using System.Threading.Tasks;
 
 namespace Application.Profiles
 {
-    public class FunctionProfile : Profile
+    public class FunctionDtoToEntity : Profile
     {
-        public FunctionProfile()
+        public FunctionDtoToEntity()
         {
-            CreateMap<Function, FunctionDto>();
-            CreateMap<FunctionDto, Function>();
+            CreateMap<FunctionGridDto, Function>();
+            CreateMap<FunctionSaveDto, Function>();
+        }
+    }
+    public class FunctionEntityToDto : Profile
+    {
+        public FunctionEntityToDto()
+        {
+            CreateMap<Function, FunctionGridDto>();
+            CreateMap<Function, FunctionDetailDto>();
         }
     }
 }

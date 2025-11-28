@@ -29,12 +29,12 @@ namespace Infrastructure.Services.Implementations
             _entityRepo = entityRepo;
             _validator = validator;
         }
-        public async Task<BaseSearchResponse<BrandDto>> GetByPage(BaseCriteria request)
+        public async Task<BaseSearchResponse<BrandGridDto>> GetByPage(BaseCriteria request)
         {
             try
             {
-                IQueryable<BrandDto> query = _entityRepo.All().Select(BrandDto.Expression);
-                return await BaseSearchResponse<BrandDto>.GetResponse(query, request);
+                IQueryable<BrandGridDto> query = _entityRepo.All().Select(BrandGridDto.Expression);
+                return await BaseSearchResponse<BrandGridDto>.GetResponse(query, request);
             }
             catch (Exception ex)
             {
@@ -42,16 +42,19 @@ namespace Infrastructure.Services.Implementations
                 throw;
             }
         }
-        public async Task<Brand> GetById(int id)
+        public async Task<BrandDetailDto> GetById(int id)
         {
             try
             {
-                var entity = await _entityRepo.GetByKeyAsync(id);
-                if (entity == null)
+                var dto = await _entityRepo.All()
+                    .Where(x => x.Id == id)
+                    .Select(BrandDetailDto.Expression)
+                    .FirstOrDefaultAsync();
+                if (dto == null)
                 {
                     throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                 }
-                return entity;
+                return dto;
             }
             catch (Exception ex)
             {

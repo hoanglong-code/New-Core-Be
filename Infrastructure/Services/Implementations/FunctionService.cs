@@ -29,12 +29,12 @@ namespace Infrastructure.Services.Implementations
             _entityRepo = entityRepo;
             _validator = validator;
         }
-        public async Task<BaseSearchResponse<FunctionDto>> GetByPage(BaseCriteria request)
+        public async Task<BaseSearchResponse<FunctionGridDto>> GetByPage(BaseCriteria request)
         {
             try
             {
-                IQueryable<FunctionDto> query = _entityRepo.All().Select(FunctionDto.Expression);
-                return await BaseSearchResponse<FunctionDto>.GetResponse(query, request);
+                IQueryable<FunctionGridDto> query = _entityRepo.All().Select(FunctionGridDto.Expression);
+                return await BaseSearchResponse<FunctionGridDto>.GetResponse(query, request);
             }
             catch (Exception ex)
             {
@@ -42,16 +42,19 @@ namespace Infrastructure.Services.Implementations
                 throw;
             }
         }
-        public async Task<Function> GetById(int id)
+        public async Task<FunctionDetailDto> GetById(int id)
         {
             try
             {
-                var entity = await _entityRepo.GetByKeyAsync(id);
-                if (entity == null)
+                var dto = await _entityRepo.All()
+                    .Where(x => x.Id == id)
+                    .Select(FunctionDetailDto.Expression)
+                    .FirstOrDefaultAsync();
+                if (dto == null)
                 {
                     throw new NotFoundException(MessageErrorConstant.NOT_FOUND);
                 }
-                return entity;
+                return dto;
             }
             catch (Exception ex)
             {
